@@ -13,32 +13,6 @@ import {
     WEDDING_TIME_EN,
     WEDDING_MONTH_PADDED,
 } from '@/app/constants/wedding';
-import {
-    imgIntroBg,
-    imgIntroAmpersand,
-    imgIntroDots,
-    imgIntroEnvBack,
-    imgIntroEnvInner,
-    imgIntroFlowerMask,
-    imgIntroFlowers,
-    imgIntroBrideCard,
-    imgIntroGroomMask,
-    imgIntroGroomCard,
-    imgIntroFloral,
-    imgIntroBridePhoto,
-    imgIntroBrideFrame,
-    imgIntroGroomPhoto,
-    imgIntroGroomFrame,
-    imgIntroTagOuter,
-    imgIntroTagInner,
-    imgIntroTagLine,
-    imgIntroBirdSeal,
-    imgIntroFlapBack,
-    imgIntroFlapDetail,
-    imgIntroJHSticker,
-    imgIntroClosedBody,
-    imgIntroClosedFlap,
-} from './assets';
 
 const collageContainer: Variants = {
     hidden: {},
@@ -97,7 +71,7 @@ export default function IntroSection() {
     const handleOpen = () => {
         if (opened || isOpening) return;
         setIsOpening(true);
-        setTimeout(() => setOpened(true), 720);
+        setTimeout(() => setOpened(true), 280);
     };
 
     // 봉투 닫힌 동안 스크롤 잠금
@@ -118,7 +92,7 @@ export default function IntroSection() {
 
         const calc = () => {
             const containerW = sectionRef.current?.clientWidth ?? window.innerWidth;
-            setContentScale(containerW / ENVELOPE_W);
+            setContentScale((containerW - 24) / ENVELOPE_W);
         };
 
         calc();
@@ -127,7 +101,11 @@ export default function IntroSection() {
     }, []);
 
     return (
-        <section ref={sectionRef} className="h-[100dvh] flex flex-col items-center relative w-full overflow-hidden">
+        <section
+            ref={sectionRef}
+            className="flex flex-col items-center relative w-full overflow-hidden"
+            style={{ height: opened ? 'max(100dvh, 786px)' : '100dvh', transition: 'height 0.5s ease-in-out' }}
+        >
             <audio ref={audioRef} src="/bgm/NewZhilla_Be-My-Valentine_short-01_75sec.wav" loop preload="auto" />
             {/* 음악 토글 버튼 */}
             <button
@@ -180,7 +158,7 @@ export default function IntroSection() {
                 <div
                     className="shrink-0 flex flex-col items-start w-full"
                     style={{
-                        paddingTop: opened ? '16px' : '32px',
+                        paddingTop: opened ? '24px' : '32px',
                         transition: 'padding 1.2s ease-in-out',
                     }}
                 >
@@ -190,7 +168,7 @@ export default function IntroSection() {
                                 className="text-[#4b3a2a] leading-[1] text-center"
                                 style={{
                                     fontFamily: "'Soluga', serif",
-                                    fontSize: opened ? 'clamp(24px, 8vw, 36px)' : 'clamp(36px, 13vw, 60px)',
+                                    fontSize: opened ? 'clamp(28px, 9.5vw, 42px)' : 'clamp(36px, 13vw, 60px)',
                                     transition: 'font-size 1.2s ease-in-out',
                                 }}
                             >
@@ -203,7 +181,7 @@ export default function IntroSection() {
                                     className="text-[#4b3a2a] text-center"
                                     style={{
                                         fontFamily: "'Soluga', serif",
-                                        fontSize: opened ? 'clamp(24px, 8vw, 36px)' : 'clamp(36px, 13vw, 60px)',
+                                        fontSize: opened ? 'clamp(28px, 9.5vw, 42px)' : 'clamp(36px, 13vw, 60px)',
                                         transition: 'font-size 1.2s ease-in-out',
                                     }}
                                 >
@@ -213,9 +191,9 @@ export default function IntroSection() {
                             <div
                                 className="relative shrink-0"
                                 style={{
-                                    width: opened ? '26px' : '39px',
-                                    height: opened ? '28px' : '42px',
-                                    marginTop: opened ? '12px' : '20px',
+                                    width: opened ? '30px' : '39px',
+                                    height: opened ? '32px' : '42px',
+                                    marginTop: opened ? '14px' : '20px',
                                     transition:
                                         'width 1.2s ease-in-out, height 1.2s ease-in-out, margin-top 1.2s ease-in-out',
                                 }}
@@ -253,7 +231,7 @@ export default function IntroSection() {
                             <p
                                 style={{
                                     fontFamily: "'Soluga', serif",
-                                    fontSize: opened ? 'clamp(15px, 5vw, 22px)' : 'clamp(22px, 7.5vw, 35px)',
+                                    fontSize: opened ? 'clamp(18px, 6vw, 26px)' : 'clamp(22px, 7.5vw, 35px)',
                                     letterSpacing: '0.1em',
                                     transition: 'font-size 1.2s ease-in-out',
                                 }}
@@ -263,7 +241,7 @@ export default function IntroSection() {
                             <p
                                 style={{
                                     fontFamily: "'Rusilla Serif', serif",
-                                    fontSize: opened ? 'clamp(18px, 6vw, 26px)' : 'clamp(28px, 9.5vw, 46px)',
+                                    fontSize: opened ? 'clamp(22px, 7vw, 30px)' : 'clamp(28px, 9.5vw, 46px)',
                                     letterSpacing: '0.1em',
                                     transition: 'font-size 1.2s ease-in-out',
                                 }}
@@ -273,7 +251,7 @@ export default function IntroSection() {
                             <p
                                 style={{
                                     fontFamily: "'Soluga', serif",
-                                    fontSize: opened ? 'clamp(15px, 5vw, 22px)' : 'clamp(22px, 7.5vw, 35px)',
+                                    fontSize: opened ? 'clamp(18px, 6vw, 26px)' : 'clamp(22px, 7.5vw, 35px)',
                                     letterSpacing: '0.1em',
                                     transition: 'font-size 1.2s ease-in-out',
                                 }}
@@ -283,7 +261,7 @@ export default function IntroSection() {
                             <p
                                 style={{
                                     fontFamily: "'Rusilla Serif', serif",
-                                    fontSize: opened ? 'clamp(18px, 6vw, 26px)' : 'clamp(28px, 9.5vw, 46px)',
+                                    fontSize: opened ? 'clamp(22px, 7vw, 30px)' : 'clamp(28px, 9.5vw, 46px)',
                                     letterSpacing: '0.1em',
                                     transition: 'font-size 1.2s ease-in-out',
                                 }}
@@ -293,7 +271,7 @@ export default function IntroSection() {
                             <p
                                 style={{
                                     fontFamily: "'Soluga', serif",
-                                    fontSize: opened ? 'clamp(15px, 5vw, 22px)' : 'clamp(22px, 7.5vw, 35px)',
+                                    fontSize: opened ? 'clamp(18px, 6vw, 26px)' : 'clamp(22px, 7.5vw, 35px)',
                                     letterSpacing: '0.1em',
                                     transition: 'font-size 1.2s ease-in-out',
                                 }}
@@ -323,7 +301,7 @@ export default function IntroSection() {
                                     animate={{ opacity: isOpening ? 0 : 1, y: 0 }}
                                     exit={{ opacity: 0 }}
                                     transition={{
-                                        duration: isOpening ? 0.38 : 0.75,
+                                        duration: isOpening ? 0.25 : 0.75,
                                         ease: 'easeOut',
                                         delay: isOpening ? 0 : 0.1,
                                     }}
@@ -423,7 +401,9 @@ export default function IntroSection() {
                                                     />
                                                 </div>
                                             </div>
-                                            <div
+                                            <motion.div
+                                                variants={fromTop}
+                                                custom={0.35}
                                                 className="col-start-1 row-start-1 inline-grid place-items-start"
                                                 style={{
                                                     marginLeft: '130px',
@@ -432,22 +412,14 @@ export default function IntroSection() {
                                                     gridTemplateRows: 'max-content',
                                                 }}
                                             >
-                                                <div
-                                                    className="col-start-1 row-start-1 h-[300px] w-[200px] relative"
-                                                    // style={{
-                                                    //     maskImage: `url('${'/images/intro/flower-mask.svg'}')`,
-                                                    //     maskRepeat: 'no-repeat',
-                                                    //     maskPosition: '15.149px 95.794px',
-                                                    //     maskSize: '336px 393px',
-                                                    // }}
-                                                >
+                                                <div className="col-start-1 row-start-1 h-[300px] w-[200px] relative">
                                                     <img
                                                         alt=""
                                                         className="absolute block inset-0 max-w-none size-full"
                                                         src={'/images/intro/intro-flower-01.svg'}
                                                     />
                                                 </div>
-                                            </div>
+                                            </motion.div>
                                         </motion.div>
 
                                         {/* 신부 폴라로이드 */}

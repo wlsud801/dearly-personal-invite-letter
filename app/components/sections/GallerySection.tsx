@@ -1,16 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import {
-    imgGalleryBg,
-    imgEnvelope,
-    imgEnvelopeMask,
-    imgSticker,
-    imgCoupleMain,
-    imgHeartFrame,
-    imgHeartPhoto,
-} from './assets';
+import { motion, type Transition } from 'framer-motion';
 import GalleryModal from '../GalleryModal';
+
+const fadeUp = (delay: number) => ({
+    initial: { opacity: 0, y: 24 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.6, ease: 'easeOut', delay } as Transition,
+});
 
 export default function GallerySection() {
     const [modalIndex, setModalIndex] = useState(0);
@@ -29,10 +28,10 @@ export default function GallerySection() {
                 className="absolute inset-0 w-full h-full object-cover pointer-events-none"
             />
 
-            <div className="relative flex flex-col gap-5 w-full items-center">
-                <h2 className="text-[#4b3a2a] text-[36px] text-center" style={{ fontFamily: "'Soluga', serif" }}>
+            <div className="relative flex flex-col w-full items-center">
+                <motion.h2 {...fadeUp(0)} className="text-[#4b3a2a] text-[36px] text-center" style={{ fontFamily: "'Soluga', serif" }}>
                     Gallery
-                </h2>
+                </motion.h2>
 
                 <div className="flex flex-col gap-[10px] items-center w-full">
                     {/* 콜라주 — Figma inline-grid 스태킹 */}
@@ -41,68 +40,28 @@ export default function GallerySection() {
                         style={{ gridTemplateColumns: 'max-content', gridTemplateRows: 'max-content' }}
                     >
                         {/* 봉투 (좌상단, -20deg) */}
-                        <div
+                        <motion.div
+                            {...fadeUp(0.1)}
                             className="col-start-1 row-start-1 flex items-center justify-center cursor-pointer"
-                            style={{ width: '272px', height: '249px' }}
+                            style={{
+                                width: '260px',
+                                height: '280px',
+                                marginLeft: '20px',
+                            }}
                             onClick={() => openModal(0)}
                         >
-                            <div style={{ transform: 'rotate(-20deg)' }}>
-                                <div
-                                    className="inline-grid place-items-start"
-                                    style={{
-                                        paddingLeft: '24px',
-                                        paddingRight: '25.8px',
-                                        paddingTop: '24px',
-                                        gridTemplateColumns: 'max-content',
-                                        gridTemplateRows: 'max-content',
-                                    }}
-                                >
-                                    {/* 봉투 몸체 */}
-                                    <div
-                                        className="col-start-1 row-start-1 relative"
-                                        style={{ width: '222px', height: '160px' }}
-                                    >
-                                        <img
-                                            alt=""
-                                            className="absolute block inset-0 max-w-none size-full"
-                                            src={imgEnvelope}
-                                        />
-                                    </div>
-                                    {/* 봉투 마스크 */}
-                                    <div
-                                        className="col-start-1 row-start-1 relative"
-                                        style={{ width: '222px', height: '156px' }}
-                                    >
-                                        <img
-                                            alt=""
-                                            className="absolute block inset-0 max-w-none size-full"
-                                            src={imgEnvelopeMask}
-                                        />
-                                    </div>
-                                    {/* JH 스티커 */}
-                                    <div
-                                        className="col-start-1 row-start-1 relative"
-                                        style={{
-                                            width: '34px',
-                                            height: '41px',
-                                            marginLeft: '94px',
-                                            marginTop: '112px',
-                                        }}
-                                    >
-                                        <div className="absolute inset-0 shadow-[0px_1.5px_1.5px_0px_rgba(0,0,0,0.25)] overflow-hidden">
-                                            <img
-                                                alt=""
-                                                className="absolute h-[91.1%] left-[0.01%] max-w-none top-[4.45%] w-[99.99%]"
-                                                src={imgSticker}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
+                            {/* 봉투 몸체 */}
+                            <div
+                                className="col-start-1 row-start-1 relative"
+                                style={{ width: '232px', height: '180px' }}
+                            >
+                                <img alt="" src={'/images/gallery/envelop.svg'} />
                             </div>
-                        </div>
+                        </motion.div>
 
                         {/* 폴라로이드 (우상단, +17.43deg) */}
-                        <div
+                        <motion.div
+                            {...fadeUp(0.2)}
                             className="col-start-1 row-start-1 inline-grid place-items-start cursor-pointer"
                             onClick={() => openModal(14)}
                             style={{
@@ -145,10 +104,11 @@ export default function GallerySection() {
                                     />
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
 
                         {/* 하트 프레임 사진 (하단, -6.19deg) */}
-                        <div
+                        <motion.div
+                            {...fadeUp(0.3)}
                             className="col-start-1 row-start-1 flex items-center justify-center cursor-pointer"
                             style={{ width: '265px', height: '238px', marginLeft: '30px', marginTop: '231px' }}
                             onClick={() => openModal(0)}
@@ -182,25 +142,27 @@ export default function GallerySection() {
                                     />
                                 </div>
                             </div>
-                        </div>
+                        </motion.div>
 
                         {/* 영문 캡션 */}
-                        <div
+                        <motion.div
+                            {...fadeUp(0.4)}
                             className="col-start-1 row-start-1 flex items-center justify-center"
-                            style={{ width: '183px', height: '75px', marginLeft: '204px', marginTop: '374px' }}
+                            style={{ width: '183px', height: '75px', marginLeft: '194px', marginTop: '374px' }}
                         >
                             <img
                                 src="/images/gallery/gallery_text.svg"
                                 alt="Come and share in the moments that make our hearts whole"
                                 style={{ transform: 'rotate(-7.5deg)', width: '183px' }}
                             />
-                        </div>
+                        </motion.div>
                     </div>
 
                     {/* 힌트 버튼 */}
-                    <button
+                    <motion.button
+                        {...fadeUp(0.5)}
                         onClick={() => setModalOpen(true)}
-                        className="bg-[rgba(255,255,255,0.4)] border border-white rounded-[10px] px-6 py-5 w-full text-center cursor-pointer"
+                        className="bg-[rgba(255,255,255,0.4)] border border-white rounded-[10px] px-6 py-3 w-full text-center cursor-pointer"
                     >
                         <p
                             className="text-[#a39c8f] text-[14px] tracking-[-0.56px]"
@@ -208,7 +170,7 @@ export default function GallerySection() {
                         >
                             사진을 클릭해 보세요!
                         </p>
-                    </button>
+                    </motion.button>
                 </div>
             </div>
 

@@ -1,4 +1,6 @@
 'use client';
+import { useRef } from 'react';
+import { motion, useInView, type Variants } from 'framer-motion';
 import CountdownTimer from "../CountdownTimer";
 import { imgCalTopDeco, imgCalBotDeco, imgCalRing } from "./assets";
 import {
@@ -14,7 +16,33 @@ import {
 
 const HEADERS = ["sun", "mon", "tus", "wed", "thu", "fri", "sat"];
 
-function WeddingCalendar() {
+const DAYS_IN_MONTH = new Date(WEDDING_YEAR, WEDDING_MONTH, 0).getDate();
+// 달력 숫자가 모두 나타난 후 하단 요소 등장 시작 시점
+const AFTER_CAL = DAYS_IN_MONTH * 0.08 + 0.2;
+
+const titleVariants: Variants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+};
+
+const dayVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: (day: number) => ({
+    opacity: 1,
+    transition: { duration: 0.4, ease: 'easeOut', delay: day * 0.08 },
+  }),
+};
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: (delay: number = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: 'easeOut', delay },
+  }),
+};
+
+function WeddingCalendar({ inView }: { inView: boolean }) {
   const firstDayOfWeek = new Date(WEDDING_YEAR, WEDDING_MONTH - 1, 1).getDay();
   const daysInMonth = new Date(WEDDING_YEAR, WEDDING_MONTH, 0).getDate();
 
@@ -24,15 +52,11 @@ function WeddingCalendar() {
   ];
   while (cells.length % 7 !== 0) cells.push(null);
 
-  // 7개씩 row로 분리 — divide-x가 부모 컨테이너에서만 동작하기 때문에 필수
   const rows: (number | null)[][] = [];
   for (let i = 0; i < cells.length; i += 7) rows.push(cells.slice(i, i + 7));
 
   return (
-    <div
-      className="w-full "
-      style={{ fontFamily: "'Soluga', serif" }}
-    >
+    <div className="w-full" style={{ fontFamily: "'Soluga', serif" }}>
       {/* 헤더 행 */}
       <div className="grid grid-cols-7 text-center border-b border-[#c8bdb0] divide-x divide-[#c8bdb0]">
         {HEADERS.map((h) => (
@@ -55,14 +79,29 @@ function WeddingCalendar() {
               >
                 {day === WEDDING_DAY ? (
                   <>
-                    <span className="relative z-10">{day}</span>
+                    <motion.span
+                      className="relative z-10"
+                      variants={dayVariants}
+                      initial="hidden"
+                      animate={inView ? "visible" : "hidden"}
+                      custom={day}
+                    >
+                      {day}
+                    </motion.span>
                     <span className="absolute inset-0 flex items-center justify-center">
                       <img src={imgCalRing} alt="" className="w-9 h-9 object-contain" />
                     </span>
                   </>
-                ) : (
-                  day
-                )}
+                ) : day ? (
+                  <motion.span
+                    variants={dayVariants}
+                    initial="hidden"
+                    animate={inView ? "visible" : "hidden"}
+                    custom={day}
+                  >
+                    {day}
+                  </motion.span>
+                ) : null}
               </div>
             ))}
           </div>
@@ -73,8 +112,11 @@ function WeddingCalendar() {
 }
 
 export default function CalendarSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const inView = useInView(sectionRef, { once: true, amount: 0.3 });
+
   return (
-    <section className="bg-[#fffdf8] flex flex-col items-center gap-5 relative overflow-hidden">
+    <section ref={sectionRef} className="bg-[#fffdf8] flex flex-col items-center gap-5 relative overflow-hidden">
       <img
         src={imgCalTopDeco}
         alt=""
@@ -83,28 +125,48 @@ export default function CalendarSection() {
       />
 
       <div className="flex flex-col items-center gap-5 w-full px-12 pt-16 pb-12">
-        <h2
+        <motion.h2
           className="text-[#4b3a2a] text-[36px] text-center"
           style={{ fontFamily: "'Soluga', serif" }}
+          variants={titleVariants}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
         >
           Wedding Day
-        </h2>
+        </motion.h2>
 
-        <WeddingCalendar />
+        <WeddingCalendar inView={inView} />
 
         <div className="flex flex-col items-center gap-1 w-full">
-          <p className="text-black text-[16px] font-medium tracking-[-0.64px] text-center">
+          <motion.p
+            className="text-black text-[16px] font-medium tracking-[-0.64px] text-center"
+            variants={fadeUp}
+            initial="hidden"
+            animate={inView ? "visible" : "hidden"}
+            custom={AFTER_CAL}
+          >
             {WEDDING_YEAR}년 {WEDDING_MONTH}월 {WEDDING_DAY}일&nbsp;&nbsp;|&nbsp;&nbsp;{WEDDING_KO_DOW}요일 {WEDDING_TIME_KO}
-          </p>
-          <p
+          </motion.p>
+          <motion.p
             className="text-[#99958f] text-[14px] text-center"
             style={{ fontFamily: "'Badoney', cursive" }}
+            variants={fadeUp}
+            initial="hidden"
+            animate={inView ? "visible" : "hidden"}
+            custom={AFTER_CAL + 0.18}
           >
             {WEDDING_DAY} {WEDDING_EN_MONTH} {WEDDING_YEAR}, {WEDDING_EN_DOW} {WEDDING_TIME_EN}
-          </p>
+          </motion.p>
         </div>
 
-        <CountdownTimer />
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          animate={inView ? "visible" : "hidden"}
+          custom={AFTER_CAL + 0.36}
+        >
+          <CountdownTimer />
+        </motion.div>
       </div>
 
       <img

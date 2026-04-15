@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import Modal from './Modal';
+import { ChevronLeftIcon, ChevronRightIcon, XIcon } from 'lucide-react';
 
 const PHOTOS = Array.from({ length: 21 }, (_, i) => {
     const n = String(i + 1).padStart(2, '0');
@@ -17,11 +18,11 @@ export default function GalleryModal({ onClose, initialIndex = 0 }: Props) {
     const [current, setCurrent] = useState(initialIndex);
 
     const prev = useCallback(() => {
-        setCurrent(c => (c - 1 + PHOTOS.length) % PHOTOS.length);
+        setCurrent((c) => (c - 1 + PHOTOS.length) % PHOTOS.length);
     }, []);
 
     const next = useCallback(() => {
-        setCurrent(c => (c + 1) % PHOTOS.length);
+        setCurrent((c) => (c + 1) % PHOTOS.length);
     }, []);
 
     // 좌우 화살표 키 내비게이션
@@ -41,13 +42,20 @@ export default function GalleryModal({ onClose, initialIndex = 0 }: Props) {
                 style={{ backgroundColor: '#f8f5f0' }}
             >
                 {/* 제목 */}
-                <div className="flex items-center justify-center py-[10px] w-full">
+                <div className="relative flex items-center justify-center py-[10px] w-full">
                     <h2
                         className="text-[36px] leading-[1.5] text-[#4b3a2a] text-center"
                         style={{ fontFamily: "'Soluga', serif" }}
                     >
                         Gallery
                     </h2>
+                    <button
+                        onClick={onClose}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center w-9 h-9"
+                        aria-label="닫기"
+                    >
+                        <XIcon className="w-6 h-6 text-[#A39C8F]" />
+                    </button>
                 </div>
 
                 {/* 사진 */}
@@ -74,9 +82,7 @@ export default function GalleryModal({ onClose, initialIndex = 0 }: Props) {
                         style={{ width: '51px', height: '51px' }}
                         aria-label="이전 사진"
                     >
-                        <svg width="15" height="24" viewBox="0 0 15 24" fill="none">
-                            <path d="M13 2L2 12L13 22" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
+                        <ChevronLeftIcon className="w-6 h-6 text-[#A39C8F]" />
                     </button>
 
                     <span
@@ -94,9 +100,7 @@ export default function GalleryModal({ onClose, initialIndex = 0 }: Props) {
                         style={{ width: '51px', height: '51px' }}
                         aria-label="다음 사진"
                     >
-                        <svg width="15" height="24" viewBox="0 0 15 24" fill="none">
-                            <path d="M2 2L13 12L2 22" stroke="#1a1a1a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
+                        <ChevronRightIcon className="w-6 h-6 text-[#A39C8F]" />
                     </button>
                 </div>
             </div>
