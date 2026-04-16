@@ -102,6 +102,27 @@ body {
   animation: float 2.5s ease-in-out infinite;
 }
 
+/* ── 이미지 저장 방지 ────────────────────────────────────────────────────── */
+img {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  pointer-events: none;
+}
+
+/* 클릭 가능한 이미지(버튼/링크 내부)는 pointer-events 유지 */
+a img,
+button img,
+[role="button"] img,
+.cursor-pointer img {
+  pointer-events: auto;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+}
+
 /* ── 스크롤바 ────────────────────────────────────────────────────────────── */
 /* Webkit (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
