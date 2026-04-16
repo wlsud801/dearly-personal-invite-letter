@@ -40,6 +40,7 @@ export async function deleteMessage(
   password: string
 ): Promise<{ error?: string; success?: boolean }> {
   if (!id || !password) return { error: '비밀번호를 입력해주세요.' }
+  if (!/^\d{4}$/.test(password)) return { error: '비밀번호는 숫자 4자리입니다.' }
 
   const supabase = createSupabaseClient()
   const { data, error: fetchError } = await supabase
@@ -67,7 +68,7 @@ export async function submitGuestbookEntry(
   const password = (formData.get('password') as string)?.trim()
 
   if (!text || !from_name) return { error: '이름과 메세지를 모두 입력해주세요.' }
-  if (!password) return { error: '비밀번호를 입력해주세요.' }
+  if (!password || !/^\d{4}$/.test(password)) return { error: '비밀번호는 숫자 4자리로 입력해주세요.' }
   if (text.length > 200) return { error: '메세지는 200자 이내로 입력해주세요.' }
 
   const supabase = createSupabaseClient()

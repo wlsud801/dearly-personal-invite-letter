@@ -16,8 +16,10 @@ export default function PasswordConfirmModal({
 }: Props) {
   const [password, setPassword] = useState("");
 
+  const isValid = /^\d{4}$/.test(password);
+
   const handleSubmit = () => {
-    if (password.trim()) onConfirm(password.trim());
+    if (isValid) onConfirm(password);
   };
 
   return (
@@ -27,15 +29,17 @@ export default function PasswordConfirmModal({
           비밀번호 확인
         </p>
         <p className="text-[#99958f] text-[13px] text-center leading-relaxed">
-          작성 시 입력한 비밀번호를 입력해주세요.
+          작성 시 입력한 비밀번호 4자리를 입력해주세요.
         </p>
         <input
           type="password"
+          inputMode="numeric"
+          maxLength={4}
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value.replace(/\D/g, "").slice(0, 4))}
           onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-          placeholder="비밀번호"
-          className="w-full h-[44px] px-4 text-[14px] bg-white border border-[#e0dbd4] rounded-[10px] outline-none focus:border-[#d7b6a2] transition-colors"
+          placeholder="숫자 4자리"
+          className="w-full h-[44px] px-4 text-[14px] text-center tracking-[0.5em] bg-white border border-[#e0dbd4] rounded-[10px] outline-none focus:border-[#d7b6a2] transition-colors"
           autoFocus
         />
         <div className="flex gap-2.5 w-full">
@@ -49,7 +53,7 @@ export default function PasswordConfirmModal({
           <button
             type="button"
             onClick={handleSubmit}
-            disabled={loading || !password.trim()}
+            disabled={loading || !isValid}
             className="flex-1 h-[44px] rounded-[10px] bg-[#d7b6a2] text-white text-[14px] font-medium active:opacity-70 disabled:opacity-50"
           >
             {loading ? "확인 중..." : "삭제"}

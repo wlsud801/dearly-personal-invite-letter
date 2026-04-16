@@ -45,9 +45,14 @@ export default function MessagePenModal({ onClose }: Props) {
                     <input
                         name="password"
                         type="password"
-                        placeholder="비밀번호 (삭제 시 사용)"
-                        maxLength={20}
+                        inputMode="numeric"
+                        pattern="\d{4}"
+                        placeholder="비밀번호 숫자 4자리 (삭제 시 사용)"
+                        maxLength={4}
                         required
+                        onInput={(e) => {
+                            e.currentTarget.value = e.currentTarget.value.replace(/\D/g, '').slice(0, 4)
+                        }}
                         className="w-full h-[44px] rounded-[8px] border border-[#e0d9cf] bg-[#fffcf5] px-4 text-[14px] text-black placeholder:text-[#c0bbb4] outline-none focus:border-[#d7b6a2]"
                     />
                     <div className="relative">
