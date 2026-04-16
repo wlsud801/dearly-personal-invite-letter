@@ -1,5 +1,6 @@
 import { getMessages } from "@/app/actions/messages";
 import Image from "next/image";
+import MessageCard from "../MessageCard";
 import MessagePenButton from "../MessagePenButton";
 import ScrollReveal from "../ScrollReveal";
 import MessageSectionClient from "./MessageSectionClient";
@@ -56,14 +57,7 @@ export default async function MessageSection() {
         <div className="flex flex-col gap-[5px] w-full">
           {preview.map((msg, i) => (
             <ScrollReveal key={msg.id} delay={0.1 * i}>
-              <div className="bg-[#fff6e2] rounded-[10px] p-5 w-full flex flex-col gap-5">
-                <p className="text-black text-[14px] leading-relaxed tracking-[-0.308px] whitespace-pre-line">
-                  {msg.text}
-                </p>
-                <p className="text-[#7a7a7a] text-[14px] leading-relaxed tracking-[-0.308px]">
-                  From. {msg.from_name}
-                </p>
-              </div>
+              <MessageCard message={msg} />
             </ScrollReveal>
           ))}
         </div>

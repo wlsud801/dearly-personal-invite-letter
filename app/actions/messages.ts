@@ -35,6 +35,29 @@ export async function submitMessage(
   return { success: true }
 }
 
+export async function deleteMessage(
+  id: string,
+  password: string
+): Promise<{ error?: string; success?: boolean }> {
+  if (!id || !password) return { error: '비밀번호를 입력해주세요.' }
+
+  const supabase = createSupabaseClient()
+  const { data, error: fetchError } = await supabase
+    .from('messages')
+    .select('password')
+    .eq('id', id)
+    .single()
+
+  if (fetchError || !data) return { error: '메세지를 찾을 수 없습니다.' }
+  if (data.password !== password) return { error: '비밀번호가 일치하지 않습니다.' }
+
+  const { error } = await supabase.from('messages').delete().eq('id', id)
+  if (error) return { error: '삭제에 실패했습니다.' }
+
+  revalidatePath('/')
+  return { success: true }
+}
+
 export async function submitGuestbookEntry(
   prevState: SubmitState,
   formData: FormData

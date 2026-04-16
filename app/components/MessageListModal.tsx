@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { X } from 'lucide-react'
+import MessageDeleteButton from './MessageDeleteButton'
 import Modal from './Modal'
 import MessageWriteForm from './MessageWriteForm'
 import type { Message } from '@/lib/supabase'
@@ -15,13 +16,16 @@ export default function MessageListModal({ messages: initialMessages, onClose }:
   const [messages, setMessages] = useState(initialMessages)
   const [showForm, setShowForm] = useState(false)
 
-  const handleSuccess = useCallback(async () => {
-    // 서버 액션으로 최신 목록 갱신
+  const refreshMessages = useCallback(async () => {
     const { getMessages } = await import('@/app/actions/messages')
     const updated = await getMessages()
     setMessages(updated)
-    setShowForm(false)
   }, [])
+
+  const handleSuccess = useCallback(async () => {
+    await refreshMessages()
+    setShowForm(false)
+  }, [refreshMessages])
 
   return (
     <Modal onClose={onClose}>
@@ -48,9 +52,12 @@ export default function MessageListModal({ messages: initialMessages, onClose }:
             messages.map((msg) => (
               <div
                 key={msg.id}
-                className="bg-[#fff6e2] rounded-[10px] p-5 flex flex-col gap-3"
+                className="bg-[#fff6e2] rounded-[10px] p-5 flex flex-col gap-3 relative"
               >
-                <p className="text-black text-[14px] leading-relaxed tracking-[-0.308px] whitespace-pre-line">
+                <div className="absolute top-3 right-3">
+                  <MessageDeleteButton messageId={msg.id} onDeleted={refreshMessages} />
+                </div>
+                <p className="text-black text-[14px] leading-relaxed tracking-[-0.308px] whitespace-pre-line pr-6">
                   {msg.text}
                 </p>
                 <p className="text-[#7a7a7a] text-[13px] tracking-[-0.308px]">
