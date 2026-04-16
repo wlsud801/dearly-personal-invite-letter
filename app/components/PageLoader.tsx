@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-/** 초기 렌더 시 보여줄 핵심 이미지들을 미리 로드한 뒤 콘텐츠를 노출 */
+/** 닫힌 봉투에 필요한 이미지 — 로딩 화면 해제 조건 */
 const CRITICAL_IMAGES = [
   '/images/intro/intro-bg.svg',
   '/images/intro/envelop-body.svg',
@@ -10,6 +10,21 @@ const CRITICAL_IMAGES = [
   '/images/intro/sticker.svg',
   '/images/intro/ampersand.svg',
   '/images/components/dot-line.svg',
+];
+
+/** 봉투 열림 후 콜라주 이미지 — 로딩 화면과 무관하게 백그라운드 프리로드 */
+const COLLAGE_IMAGES = [
+  '/images/intro/envelop-back.svg',
+  '/images/intro/envelop-front.svg',
+  '/images/intro/intro-flower-01.svg',
+  '/images/intro/intro-flower-02.svg',
+  '/images/intro/intro-tag-outer.svg',
+  '/images/intro/intro-tag-inner.svg',
+  '/images/intro/intro-art-img.svg',
+  '/images/components/polaroid-wide.svg',
+  '/images/components/polaroid-narrow.svg',
+  '/images/original/hyebin_12.jpeg',
+  '/images/original/hyebin_11.jpeg',
 ];
 
 function preloadImage(src: string): Promise<void> {
@@ -25,7 +40,12 @@ export default function PageLoader({ children }: { children: React.ReactNode }) 
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    Promise.all(CRITICAL_IMAGES.map(preloadImage)).then(() => setReady(true));
+    // 1단계: 닫힌 봉투 이미지 로드 → 화면 표시
+    Promise.all(CRITICAL_IMAGES.map(preloadImage)).then(() => {
+      setReady(true);
+      // 2단계: 콜라주 이미지 백그라운드 프리로드 (봉투 탭 전에 미리 캐시)
+      COLLAGE_IMAGES.forEach(preloadImage);
+    });
   }, []);
 
   return (
