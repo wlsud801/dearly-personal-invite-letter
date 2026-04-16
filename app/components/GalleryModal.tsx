@@ -39,7 +39,7 @@ export default function GalleryModal({ onClose, initialIndex = 0 }: Props) {
     return (
         <Modal onClose={onClose}>
             <div
-                className="flex flex-col items-center w-full max-w-[430px] h-[100dvh] overflow-hidden"
+                className="flex flex-col items-center w-[100vw] max-w-[430px] h-[100dvh] overflow-hidden"
                 style={{ backgroundColor: '#f8f5f0' }}
             >
                 {/* 제목 */}
@@ -66,6 +66,8 @@ export default function GalleryModal({ onClose, initialIndex = 0 }: Props) {
                         alt={`웨딩 사진 ${current + 1}`}
                         fill
                         sizes="430px"
+                        quality={90}
+                        priority
                         className="object-contain"
                     />
                 </div>

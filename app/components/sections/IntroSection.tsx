@@ -15,6 +15,8 @@ import { AnimatePresence, motion, type Variants } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
+const GPU_STYLE = { willChange: "transform, opacity" } as const;
+
 const collageContainer: Variants = {
   hidden: {},
   visible: {},
@@ -189,11 +191,13 @@ export default function IntroSection() {
 
       <div className="relative flex flex-col items-start w-full min-h-full flex-1">
         {/* ── HEADER: 이름 + 날짜 ── */}
+        {/* GPU 전용: font-size/padding/width/height 대신 transform: scale + translateY 사용 */}
         <div
-          className="shrink-0 flex flex-col items-start w-full"
+          className="shrink-0 flex flex-col items-start w-full pt-[24px]"
           style={{
-            paddingTop: opened ? "24px" : "32px",
-            transition: "padding 1.2s ease-in-out",
+            transform: opened ? "translateY(0)" : "translateY(8px)",
+            transition: "transform 1.2s ease-in-out",
+            willChange: "transform",
           }}
         >
           <div className="flex flex-col items-center w-full">
@@ -202,10 +206,10 @@ export default function IntroSection() {
                 className="text-[#4b3a2a] leading-[1] text-center"
                 style={{
                   fontFamily: "'Soluga', serif",
-                  fontSize: opened
-                    ? "clamp(28px, 9.5vw, 42px)"
-                    : "clamp(36px, 13vw, 60px)",
-                  transition: "font-size 1.2s ease-in-out",
+                  fontSize: "clamp(28px, 9.5vw, 42px)",
+                  transform: opened ? "scale(1)" : "scale(1.4)",
+                  transition: "transform 1.2s ease-in-out",
+                  willChange: "transform",
                 }}
               >
                 JaeHwan
@@ -217,10 +221,10 @@ export default function IntroSection() {
                   className="text-[#4b3a2a] text-center"
                   style={{
                     fontFamily: "'Soluga', serif",
-                    fontSize: opened
-                      ? "clamp(28px, 9.5vw, 42px)"
-                      : "clamp(36px, 13vw, 60px)",
-                    transition: "font-size 1.2s ease-in-out",
+                    fontSize: "clamp(28px, 9.5vw, 42px)",
+                    transform: opened ? "scale(1)" : "scale(1.4)",
+                    transition: "transform 1.2s ease-in-out",
+                    willChange: "transform",
                   }}
                 >
                   HyeBin
@@ -229,15 +233,17 @@ export default function IntroSection() {
               <div
                 className="relative shrink-0"
                 style={{
-                  width: opened ? "30px" : "39px",
-                  height: opened ? "32px" : "42px",
-                  marginTop: opened ? "14px" : "20px",
-                  transition:
-                    "width 1.2s ease-in-out, height 1.2s ease-in-out, margin-top 1.2s ease-in-out",
+                  width: "30px",
+                  height: "32px",
+                  marginTop: "14px",
+                  transform: opened ? "scale(1)" : "scale(1.3) translate(6px, 4px)",
+                  transition: "transform 1.2s ease-in-out",
+                  willChange: "transform",
                 }}
               >
                 <img
                   alt=""
+                  decoding="async"
                   className="absolute block inset-0 max-w-none size-full"
                   src={"/images/intro/ampersand.svg"}
                 />
@@ -246,17 +252,11 @@ export default function IntroSection() {
           </div>
 
           {/* 점 구분선 */}
-          <div
-            className="flex items-center justify-center px-[10px] w-full"
-            style={{
-              paddingTop: opened ? "2px" : "0px",
-              paddingBottom: opened ? "2px" : "0px",
-              transition: "padding 1.2s ease-in-out",
-            }}
-          >
-            <div className="">
+          <div className="flex items-center justify-center px-[10px] py-[2px] w-full">
+            <div>
               <img
                 alt=""
+                decoding="async"
                 className="block max-w-none size-full"
                 src={"/images/components/dot-line.svg"}
               />
@@ -265,15 +265,19 @@ export default function IntroSection() {
 
           {/* 05 . 31 . 2026 */}
           <div className="flex items-center justify-center w-full">
-            <div className="flex gap-[clamp(4px,2vw,10px)] items-center justify-center text-[#4b3a2a]">
+            <div
+              className="flex gap-[clamp(4px,2vw,10px)] items-center justify-center text-[#4b3a2a]"
+              style={{
+                transform: opened ? "scale(1)" : "scale(1.35)",
+                transition: "transform 1.2s ease-in-out",
+                willChange: "transform",
+              }}
+            >
               <p
                 style={{
                   fontFamily: "'Soluga', serif",
-                  fontSize: opened
-                    ? "clamp(18px, 6vw, 26px)"
-                    : "clamp(22px, 7.5vw, 35px)",
+                  fontSize: "clamp(18px, 6vw, 26px)",
                   letterSpacing: "0.1em",
-                  transition: "font-size 1.2s ease-in-out",
                 }}
               >
                 {WEDDING_MONTH_PADDED}
@@ -281,11 +285,8 @@ export default function IntroSection() {
               <p
                 style={{
                   fontFamily: "'Rusilla Serif', serif",
-                  fontSize: opened
-                    ? "clamp(22px, 7vw, 30px)"
-                    : "clamp(28px, 9.5vw, 46px)",
+                  fontSize: "clamp(22px, 7vw, 30px)",
                   letterSpacing: "0.1em",
-                  transition: "font-size 1.2s ease-in-out",
                 }}
               >
                 .
@@ -293,11 +294,8 @@ export default function IntroSection() {
               <p
                 style={{
                   fontFamily: "'Soluga', serif",
-                  fontSize: opened
-                    ? "clamp(18px, 6vw, 26px)"
-                    : "clamp(22px, 7.5vw, 35px)",
+                  fontSize: "clamp(18px, 6vw, 26px)",
                   letterSpacing: "0.1em",
-                  transition: "font-size 1.2s ease-in-out",
                 }}
               >
                 {String(WEDDING_DAY).padStart(2, "0")}
@@ -305,11 +303,8 @@ export default function IntroSection() {
               <p
                 style={{
                   fontFamily: "'Rusilla Serif', serif",
-                  fontSize: opened
-                    ? "clamp(22px, 7vw, 30px)"
-                    : "clamp(28px, 9.5vw, 46px)",
+                  fontSize: "clamp(22px, 7vw, 30px)",
                   letterSpacing: "0.1em",
-                  transition: "font-size 1.2s ease-in-out",
                 }}
               >
                 .
@@ -317,11 +312,8 @@ export default function IntroSection() {
               <p
                 style={{
                   fontFamily: "'Soluga', serif",
-                  fontSize: opened
-                    ? "clamp(18px, 6vw, 26px)"
-                    : "clamp(22px, 7.5vw, 35px)",
+                  fontSize: "clamp(18px, 6vw, 26px)",
                   letterSpacing: "0.1em",
-                  transition: "font-size 1.2s ease-in-out",
                 }}
               >
                 {WEDDING_YEAR}
@@ -432,6 +424,7 @@ export default function IntroSection() {
                   variants={collageContainer}
                   initial="hidden"
                   animate="visible"
+                  style={{ contain: "layout style" }}
                 >
                   <div
                     className="inline-grid place-items-start"
@@ -450,12 +443,14 @@ export default function IntroSection() {
                         marginTop: "43.7px",
                         gridTemplateColumns: "max-content",
                         gridTemplateRows: "max-content",
+                        ...GPU_STYLE,
                       }}
                     >
                       <div className="col-start-1 row-start-1 h-[433px] w-[370px] relative">
                         <div className="absolute">
                           <img
                             alt=""
+                            decoding="async"
                             className="block max-w-none size-full"
                             src={"/images/intro/envelop-back.svg"}
                           />
@@ -475,6 +470,7 @@ export default function IntroSection() {
                         <div className="col-start-1 row-start-1 h-[300px] w-[200px] relative">
                           <img
                             alt=""
+                            decoding="async"
                             className="absolute block inset-0 max-w-none size-full"
                             src={"/images/intro/intro-flower-01.svg"}
                           />
@@ -492,6 +488,7 @@ export default function IntroSection() {
                         marginTop: "50.67px",
                         gridTemplateColumns: "max-content",
                         gridTemplateRows: "max-content",
+                        ...GPU_STYLE,
                       }}
                     >
                       <div
@@ -506,7 +503,7 @@ export default function IntroSection() {
                           <div className="h-[152px] relative w-[146px] overflow-hidden">
                             <Image
                               alt=""
-                              src="/images/original/hyebin_12.jpeg"
+                              src="/images/optimized/hyebin_12.jpeg"
                               fill
                               sizes="146px"
                               className="object-cover"
@@ -523,6 +520,7 @@ export default function IntroSection() {
                           <div className="h-[210px] relative w-[172px]">
                             <img
                               alt=""
+                              decoding="async"
                               className="absolute inset-0 max-w-none object-cover size-full shadow-2xl"
                               src={"/images/components/polaroid-wide.svg"}
                             />
@@ -536,12 +534,13 @@ export default function IntroSection() {
                       variants={fromTop}
                       custom={0.64}
                       className="col-start-1 row-start-1 flex h-[151px] items-center justify-center"
-                      style={{ marginTop: "145.42px", width: "163.75px" }}
+                      style={{ marginTop: "145.42px", width: "163.75px", ...GPU_STYLE }}
                     >
                       <div className="h-[170px] relative w-[163px] rotate-[-10deg] translate-x-[30px]">
                         <img
                           alt=""
-                          className="absolute block w-fullh-[142px] object-cover "
+                          decoding="async"
+                          className="absolute block w-full h-[142px] object-cover"
                           src={"/images/intro/intro-flower-02.svg"}
                         />
                       </div>
@@ -557,6 +556,7 @@ export default function IntroSection() {
                         marginTop: "178.72px",
                         gridTemplateColumns: "max-content",
                         gridTemplateRows: "max-content",
+                        ...GPU_STYLE,
                       }}
                     >
                       <div
@@ -571,7 +571,7 @@ export default function IntroSection() {
                           <div className="h-[170px] relative w-[112px] overflow-hidden">
                             <Image
                               alt=""
-                              src="/images/original/hyebin_11.jpeg"
+                              src="/images/optimized/hyebin_11.jpeg"
                               fill
                               sizes="112px"
                               className="object-cover scale-[2.5] translate-x-[20px] translate-y-[30px]"
@@ -587,6 +587,7 @@ export default function IntroSection() {
                           <div className="h-[206px] relative w-[129px]">
                             <img
                               alt=""
+                              decoding="async"
                               className="absolute inset-0 max-w-none object-cover size-full"
                               src={"/images/components/polaroid-narrow.svg"}
                             />
@@ -605,6 +606,7 @@ export default function IntroSection() {
                         marginTop: "137.91px",
                         gridTemplateColumns: "max-content",
                         gridTemplateRows: "max-content",
+                        ...GPU_STYLE,
                       }}
                     >
                       <div
@@ -615,6 +617,7 @@ export default function IntroSection() {
                           <div className="h-[140px] relative w-[191px]">
                             <img
                               alt=""
+                              decoding="async"
                               className="absolute block inset-0 max-w-none size-full"
                               src={"/images/intro/intro-tag-outer.svg"}
                             />
@@ -633,6 +636,7 @@ export default function IntroSection() {
                           <div className="h-[120px] relative w-[178px]">
                             <img
                               alt=""
+                              decoding="async"
                               className="absolute block inset-0 max-w-none size-full"
                               src={"/images/intro/intro-tag-inner.svg"}
                             />
@@ -714,10 +718,11 @@ export default function IntroSection() {
                       variants={fromTop}
                       custom={0.88}
                       className="col-start-1 row-start-1 h-[118px] w-[116px] relative"
-                      style={{ marginLeft: "221.26px", marginTop: "224px" }}
+                      style={{ marginLeft: "221.26px", marginTop: "224px", ...GPU_STYLE }}
                     >
                       <img
                         alt=""
+                        decoding="async"
                         className="absolute block inset-0 max-w-none size-full"
                         src={"/images/intro/intro-art-img.svg"}
                       />
@@ -733,6 +738,7 @@ export default function IntroSection() {
                         marginTop: "233.7px",
                         gridTemplateColumns: "max-content",
                         gridTemplateRows: "max-content",
+                        ...GPU_STYLE,
                       }}
                     >
                       <div
@@ -745,6 +751,7 @@ export default function IntroSection() {
                         <div className="col-start-1 row-start-1 h-[243px] w-[370px] relative">
                           <img
                             alt=""
+                            decoding="async"
                             className="absolute block inset-0 max-w-none size-full"
                             src={"/images/intro/envelop-front.svg"}
                           />

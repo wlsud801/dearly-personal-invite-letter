@@ -21,8 +21,8 @@ const PRELOAD_IMAGES = [
   '/images/intro/intro-art-img.svg',
   '/images/components/polaroid-wide.svg',
   '/images/components/polaroid-narrow.svg',
-  '/images/original/hyebin_12.jpeg',
-  '/images/original/hyebin_11.jpeg',
+  '/images/optimized/hyebin_12.jpeg',
+  '/images/optimized/hyebin_11.jpeg',
 ];
 
 function preloadImage(src: string): Promise<void> {
