@@ -1,44 +1,42 @@
-'use client';
-import { useRef } from 'react';
-import { motion, useInView, type Variants } from 'framer-motion';
-import CountdownTimer from "../CountdownTimer";
-import { imgCalTopDeco, imgCalBotDeco, imgCalRing } from "./assets";
+"use client";
 import {
-  WEDDING_YEAR,
-  WEDDING_MONTH,
   WEDDING_DAY,
-  WEDDING_KO_DOW,
   WEDDING_EN_DOW,
   WEDDING_EN_MONTH,
-  WEDDING_TIME_KO,
+  WEDDING_KO_DOW,
+  WEDDING_MONTH,
   WEDDING_TIME_EN,
+  WEDDING_TIME_KO,
+  WEDDING_YEAR,
 } from "@/app/constants/wedding";
+import { motion, useInView, type Variants } from "framer-motion";
+import { useRef } from "react";
+import CountdownTimer from "../CountdownTimer";
 
 const HEADERS = ["sun", "mon", "tus", "wed", "thu", "fri", "sat"];
 
-const DAYS_IN_MONTH = new Date(WEDDING_YEAR, WEDDING_MONTH, 0).getDate();
-// 달력 숫자가 모두 나타난 후 하단 요소 등장 시작 시점
-const AFTER_CAL = DAYS_IN_MONTH * 0.08 + 0.2;
-
 const titleVariants: Variants = {
   hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
-const dayVariants: Variants = {
+const rowVariants: Variants = {
   hidden: { opacity: 0 },
-  visible: (day: number) => ({
+  visible: (rowIdx: number) => ({
     opacity: 1,
-    transition: { duration: 0.4, ease: 'easeOut', delay: day * 0.08 },
+    transition: { duration: 0.4, ease: "easeOut", delay: rowIdx * 0.1 },
   }),
 };
+
+// 달력 행이 모두 나타난 후 하단 요소 등장 시작 (최대 6행 × 0.1s + 여유)
+const AFTER_CAL_DELAY = 6 * 0.1 + 0.15;
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 10 },
   visible: (delay: number = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: 'easeOut', delay },
+    transition: { duration: 0.5, ease: "easeOut", delay },
   }),
 };
 
@@ -69,7 +67,14 @@ function WeddingCalendar({ inView }: { inView: boolean }) {
       {/* 날짜 행 */}
       <div className="divide-y divide-[#c8bdb0]">
         {rows.map((row, rowIdx) => (
-          <div key={rowIdx} className="grid grid-cols-7 text-center divide-x divide-[#c8bdb0]">
+          <motion.div
+            key={rowIdx}
+            className="grid grid-cols-7 text-center divide-x divide-[#c8bdb0]"
+            variants={rowVariants}
+            initial="hidden"
+            animate={inView ? "visible" : "hidden"}
+            custom={rowIdx}
+          >
             {row.map((day, colIdx) => (
               <div
                 key={colIdx}
@@ -79,32 +84,21 @@ function WeddingCalendar({ inView }: { inView: boolean }) {
               >
                 {day === WEDDING_DAY ? (
                   <>
-                    <motion.span
-                      className="relative z-10"
-                      variants={dayVariants}
-                      initial="hidden"
-                      animate={inView ? "visible" : "hidden"}
-                      custom={day}
-                    >
-                      {day}
-                    </motion.span>
+                    <span className="relative z-10">{day}</span>
                     <span className="absolute inset-0 flex items-center justify-center">
-                      <img src={imgCalRing} alt="" className="w-9 h-9 object-contain" />
+                      <img
+                        src={"/images/calendar/ring.svg"}
+                        alt=""
+                        className="w-9 h-9 object-contain"
+                      />
                     </span>
                   </>
                 ) : day ? (
-                  <motion.span
-                    variants={dayVariants}
-                    initial="hidden"
-                    animate={inView ? "visible" : "hidden"}
-                    custom={day}
-                  >
-                    {day}
-                  </motion.span>
+                  <span>{day}</span>
                 ) : null}
               </div>
             ))}
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>
@@ -116,13 +110,16 @@ export default function CalendarSection() {
   const inView = useInView(sectionRef, { once: true, amount: 0.3 });
 
   return (
-    <section ref={sectionRef} className="bg-[#fffdf8] flex flex-col items-center gap-5 relative overflow-hidden">
-      <img
+    <section
+      ref={sectionRef}
+      className="bg-[#fffdf8] flex flex-col items-center gap-5 relative overflow-hidden"
+    >
+      {/* <img
         src={imgCalTopDeco}
         alt=""
         className="absolute top-0 left-0 w-full pointer-events-none"
         style={{ height: "17%" }}
-      />
+      /> */}
 
       <div className="flex flex-col items-center gap-5 w-full px-12 pt-16 pb-12">
         <motion.h2
@@ -143,9 +140,10 @@ export default function CalendarSection() {
             variants={fadeUp}
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
-            custom={AFTER_CAL}
+            custom={AFTER_CAL_DELAY}
           >
-            {WEDDING_YEAR}년 {WEDDING_MONTH}월 {WEDDING_DAY}일&nbsp;&nbsp;|&nbsp;&nbsp;{WEDDING_KO_DOW}요일 {WEDDING_TIME_KO}
+            {WEDDING_YEAR}년 {WEDDING_MONTH}월 {WEDDING_DAY}
+            일&nbsp;&nbsp;|&nbsp;&nbsp;{WEDDING_KO_DOW}요일 {WEDDING_TIME_KO}
           </motion.p>
           <motion.p
             className="text-[#99958f] text-[14px] text-center"
@@ -153,9 +151,10 @@ export default function CalendarSection() {
             variants={fadeUp}
             initial="hidden"
             animate={inView ? "visible" : "hidden"}
-            custom={AFTER_CAL + 0.18}
+            custom={AFTER_CAL_DELAY + 0.18}
           >
-            {WEDDING_DAY} {WEDDING_EN_MONTH} {WEDDING_YEAR}, {WEDDING_EN_DOW} {WEDDING_TIME_EN}
+            {WEDDING_DAY} {WEDDING_EN_MONTH} {WEDDING_YEAR}, {WEDDING_EN_DOW}{" "}
+            {WEDDING_TIME_EN}
           </motion.p>
         </div>
 
@@ -163,18 +162,18 @@ export default function CalendarSection() {
           variants={fadeUp}
           initial="hidden"
           animate={inView ? "visible" : "hidden"}
-          custom={AFTER_CAL + 0.36}
+          custom={AFTER_CAL_DELAY + 0.36}
         >
           <CountdownTimer />
         </motion.div>
       </div>
 
-      <img
+      {/* <img
         src={imgCalBotDeco}
         alt=""
         className="absolute bottom-0 left-0 w-full pointer-events-none"
         style={{ height: "17%" }}
-      />
+      /> */}
     </section>
   );
 }

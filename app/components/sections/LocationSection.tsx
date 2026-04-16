@@ -1,14 +1,19 @@
-'use client'
+"use client";
 
-import { useToast } from "../Toast";
+import { motion, type Variants } from "framer-motion";
 import CallButton from "../CallButton";
 import CopyButton from "../CopyButton";
-import {
-  imgNaverIcon,
-  imgTmapIcon,
-  imgHrLine,
-} from "./assets";
 import KakaoMap from "../KakaoMap";
+import { useToast } from "../Toast";
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (delay: number = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut", delay },
+  }),
+};
 
 const VENUE_QUERY = encodeURIComponent("라루체 웨딩");
 
@@ -60,7 +65,9 @@ export default function LocationSection() {
 
     // 앱 실행 시 페이지가 blur됨 — blur 없이 타임아웃이 지나면 미설치로 판단
     let appOpened = false;
-    const onBlur = () => { appOpened = true; };
+    const onBlur = () => {
+      appOpened = true;
+    };
     window.addEventListener("blur", onBlur, { once: true });
 
     setTimeout(() => {
@@ -75,7 +82,14 @@ export default function LocationSection() {
     <>
       <section className="bg-[#f8f5f0] flex flex-col items-center px-12 py-12 gap-10">
         {/* 제목 + 주소 */}
-        <div className="flex flex-col gap-5 items-center w-full">
+        <motion.div
+          className="flex flex-col gap-5 items-center w-full"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          custom={0}
+        >
           <h2
             className="text-[#4b3a2a] text-[36px] text-center"
             style={{ fontFamily: "'Soluga', serif" }}
@@ -96,13 +110,24 @@ export default function LocationSection() {
               <CopyButton text="서울 중구 퇴계로18길 46" />
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* 지도 + 버튼 */}
-        <div className="flex flex-col gap-6 items-center w-full">
+        <motion.div
+          className="flex flex-col gap-6 items-center w-full"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.3 }}
+          custom={0.15}
+        >
           <div
             className="w-full overflow-hidden"
-            style={{ marginLeft: "-48px", marginRight: "-48px", width: "calc(100% + 96px)" }}
+            style={{
+              marginLeft: "-48px",
+              marginRight: "-48px",
+              width: "calc(100% + 96px)",
+            }}
           >
             <KakaoMap />
           </div>
@@ -113,7 +138,11 @@ export default function LocationSection() {
               className="flex flex-1 items-center justify-center gap-2 bg-white rounded-[10px] h-[50px] shadow-sm active:opacity-70"
             >
               <span className="text-black text-[16px]">네이버</span>
-              <img src={imgNaverIcon} alt="" className="w-[18px] h-[18px] object-contain" />
+              <img
+                src={"/images/icon/naver-map.svg"}
+                alt=""
+                className="w-[18px] h-[18px] object-contain"
+              />
             </button>
             <button
               type="button"
@@ -121,17 +150,30 @@ export default function LocationSection() {
               className="flex flex-1 items-center justify-center gap-2 bg-white rounded-[10px] h-[50px] shadow-sm active:opacity-70"
             >
               <span className="text-black text-[16px]">T맵</span>
-              <img src={imgTmapIcon} alt="" className="w-[18px] h-[18px] object-contain" />
+              <img
+                src={"/images/icon/t-map.svg"}
+                alt=""
+                className="w-[18px] h-[18px] object-contain"
+              />
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* 교통 안내 */}
         <div className="flex flex-col w-full">
           {TRANSPORTS.map((t, i) => (
-            <div key={t.type}>
+            <motion.div
+              key={t.type}
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+              custom={0.3 + i * 0.12}
+            >
               <div className="flex flex-col gap-2.5 min-h-[79px] w-full justify-center">
-                <p className="text-[#99958f] text-[16px] tracking-[-0.352px]">{t.type}</p>
+                <p className="text-[#99958f] text-[16px] tracking-[-0.352px]">
+                  {t.type}
+                </p>
                 <div>
                   <p className="text-black text-[15px] font-medium">{t.main}</p>
                   <p className="text-[#7a7a7a] text-[15px]">{t.sub}</p>
@@ -139,16 +181,18 @@ export default function LocationSection() {
               </div>
               {t.extra && (
                 <div className="flex flex-col gap-1 w-full mt-6">
-                  <p className="text-black text-[15px] font-medium">{t.extra.main}</p>
+                  <p className="text-black text-[15px] font-medium">
+                    {t.extra.main}
+                  </p>
                   <p className="text-[#7a7a7a] text-[15px]">{t.extra.sub}</p>
                 </div>
               )}
               {i < TRANSPORTS.length - 1 && (
                 <div className="py-6 flex items-center justify-center">
-                  <img src={imgHrLine} alt="" className="w-full h-px" />
+                  <hr className="w-full border-t border-[#e0e0e0]" />
                 </div>
               )}
-            </div>
+            </motion.div>
           ))}
         </div>
       </section>

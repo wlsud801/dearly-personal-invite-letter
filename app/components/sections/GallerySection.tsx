@@ -1,15 +1,24 @@
 'use client';
 
 import { useState } from 'react';
-import { motion, type Transition } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import GalleryModal from '../GalleryModal';
 
-const fadeUp = (delay: number) => ({
-    initial: { opacity: 0, y: 24 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true },
-    transition: { duration: 0.6, ease: 'easeOut', delay } as Transition,
-});
+const staggerParent: Variants = {
+    hidden: {},
+    visible: {
+        transition: { staggerChildren: 0.25 },
+    },
+};
+
+const fadeUpChild: Variants = {
+    hidden: { opacity: 0, y: 24 },
+    visible: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.6, ease: 'easeOut' },
+    },
+};
 
 export default function GallerySection() {
     const [modalIndex, setModalIndex] = useState(0);
@@ -28,8 +37,14 @@ export default function GallerySection() {
                 className="absolute inset-0 w-full h-full object-cover pointer-events-none"
             />
 
-            <div className="relative flex flex-col w-full items-center">
-                <motion.h2 {...fadeUp(0)} className="text-[#4b3a2a] text-[36px] text-center" style={{ fontFamily: "'Soluga', serif" }}>
+            <motion.div
+                className="relative flex flex-col w-full items-center"
+                variants={staggerParent}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
+            >
+                <motion.h2 variants={fadeUpChild} className="text-[#4b3a2a] text-[36px] text-center" style={{ fontFamily: "'Soluga', serif" }}>
                     Gallery
                 </motion.h2>
 
@@ -41,7 +56,7 @@ export default function GallerySection() {
                     >
                         {/* 봉투 (좌상단, -20deg) */}
                         <motion.div
-                            {...fadeUp(0.1)}
+                            variants={fadeUpChild}
                             className="col-start-1 row-start-1 flex items-center justify-center cursor-pointer"
                             style={{
                                 width: '260px',
@@ -61,7 +76,7 @@ export default function GallerySection() {
 
                         {/* 폴라로이드 (우상단, +17.43deg) */}
                         <motion.div
-                            {...fadeUp(0.2)}
+                            variants={fadeUpChild}
                             className="col-start-1 row-start-1 inline-grid place-items-start cursor-pointer"
                             onClick={() => openModal(14)}
                             style={{
@@ -108,7 +123,7 @@ export default function GallerySection() {
 
                         {/* 하트 프레임 사진 (하단, -6.19deg) */}
                         <motion.div
-                            {...fadeUp(0.3)}
+                            variants={fadeUpChild}
                             className="col-start-1 row-start-1 flex items-center justify-center cursor-pointer"
                             style={{ width: '265px', height: '238px', marginLeft: '30px', marginTop: '231px' }}
                             onClick={() => openModal(0)}
@@ -146,7 +161,7 @@ export default function GallerySection() {
 
                         {/* 영문 캡션 */}
                         <motion.div
-                            {...fadeUp(0.4)}
+                            variants={fadeUpChild}
                             className="col-start-1 row-start-1 flex items-center justify-center"
                             style={{ width: '183px', height: '75px', marginLeft: '194px', marginTop: '374px' }}
                         >
@@ -160,7 +175,7 @@ export default function GallerySection() {
 
                     {/* 힌트 버튼 */}
                     <motion.button
-                        {...fadeUp(0.5)}
+                        variants={fadeUpChild}
                         onClick={() => setModalOpen(true)}
                         className="bg-[rgba(255,255,255,0.4)] border border-white rounded-[10px] px-6 py-3 w-full text-center cursor-pointer"
                     >
@@ -172,7 +187,7 @@ export default function GallerySection() {
                         </p>
                     </motion.button>
                 </div>
-            </div>
+            </motion.div>
 
             {modalOpen && <GalleryModal initialIndex={modalIndex} onClose={() => setModalOpen(false)} />}
         </section>

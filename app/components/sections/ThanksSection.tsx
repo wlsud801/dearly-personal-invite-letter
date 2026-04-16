@@ -1,8 +1,20 @@
-'use client';
+"use client";
 
+import { CopyIcon } from "lucide-react";
+import { motion, type Variants } from "framer-motion";
 import Script from "next/script";
-import { imgThanksLeft, imgThanksRight, imgKakaoIcon, imgLinkIcon } from "./assets";
 import { useToast } from "../Toast";
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: (delay: number = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut", delay },
+  }),
+};
+
+const viewportConfig = { once: true, amount: 0.3 } as const;
 
 declare global {
   interface Window {
@@ -29,7 +41,8 @@ export default function ThanksSection() {
       objectType: "feed",
       content: {
         title: "손재환 ♥ 김혜빈 결혼합니다",
-        description: "2026년 5월 31일 일요일 오전 11시 30분 | 라루체 명동 5F 그레이스홀",
+        description:
+          "2026년 5월 31일 일요일 오전 11시 30분 | 라루체 명동 5F 그레이스홀",
         imageUrl: `${window.location.origin}/images/og-image.jpg`,
         link: { mobileWebUrl: url, webUrl: url },
       },
@@ -64,37 +77,62 @@ export default function ThanksSection() {
         }}
       />
 
-      <section className="bg-[#2c4221] flex flex-col items-center px-12 py-12 gap-10">
+      <section className="bg-[#2c4221] flex flex-col items-center px-4 py-12 gap-10">
         <div className="flex flex-col gap-5 items-center w-full">
           {/* Thanks to 제목 */}
-          <div className="flex items-center gap-3 w-full justify-center">
-            <img src={imgThanksLeft} alt="" className="h-[54px] w-[52px] object-contain" />
-            <h2
-              className="text-white text-[36px] text-center"
-              style={{ fontFamily: "'Soluga', serif" }}
-            >
-              Thanks to
-            </h2>
-            <img src={imgThanksRight} alt="" className="h-[55px] w-[50px] object-contain" />
-          </div>
+          <motion.div
+            className="flex items-center gap-3 w-full justify-center"
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={viewportConfig}
+            custom={0}
+          >
+            <img
+              src={"/images/footer/footer_header.svg"}
+              alt=""
+              className="h-[55px] w-full object-contain"
+            />
+          </motion.div>
 
           {/* 감사 본문 */}
           <div className="flex flex-col items-center">
-            <div className="px-6 py-5 text-center">
+            <motion.div
+              className="px-6 py-5 text-center"
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewportConfig}
+              custom={0.15}
+            >
               <p className="text-[#b2baae] text-[15px] leading-relaxed tracking-[-0.6px] whitespace-pre-line">
                 {`오랜 시간 저희를 따뜻한 시선으로\n지켜봐주셔서 감사합니다.`}
               </p>
-            </div>
-            <div className="px-6 py-5 text-center">
+            </motion.div>
+            <motion.div
+              className="px-6 py-5 text-center"
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewportConfig}
+              custom={0.3}
+            >
               <p className="text-white text-[16px] font-medium leading-relaxed tracking-[-0.64px] whitespace-pre-line">
                 {`보내주신 마음을 오래도록 기억하며\n서로의 동반자로 의미있는 삶을 살겠습니다.`}
               </p>
-            </div>
+            </motion.div>
           </div>
         </div>
 
         {/* 공유 버튼 */}
-        <div className="flex flex-col gap-2.5 w-full">
+        <motion.div
+          className="flex flex-col gap-2.5 w-full px-8"
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={viewportConfig}
+          custom={0.45}
+        >
           <button
             type="button"
             onClick={handleKakaoShare}
@@ -104,7 +142,11 @@ export default function ThanksSection() {
               카카오톡으로 공유하기
             </span>
             <div className="flex items-center justify-center w-[30px] h-[30px] p-2.5">
-              <img src={imgKakaoIcon} alt="" className="w-3 h-[11px]" />
+              <img
+                src={"/images/footer/kakao_icon.png"}
+                alt=""
+                className="w-3 h-[11px]"
+              />
             </div>
           </button>
           <button
@@ -115,11 +157,9 @@ export default function ThanksSection() {
             <span className="text-[#212842] text-[14px] font-medium tracking-[-0.56px] flex-1 text-left">
               청첩장 주소 복사하기
             </span>
-            <div className="flex items-center justify-center w-[30px] h-[30px] p-2.5">
-              <img src={imgLinkIcon} alt="" className="w-3 h-3" />
-            </div>
+            <CopyIcon className="w-3 h-3 mr-1" />
           </button>
-        </div>
+        </motion.div>
       </section>
 
       {toastNode}

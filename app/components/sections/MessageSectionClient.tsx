@@ -1,16 +1,16 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import MessageListModal from '../MessageListModal'
-import type { Message } from '@/lib/supabase'
+import type { Message } from "@/lib/supabase";
+import { ChevronRightIcon } from "lucide-react";
+import { useState } from "react";
+import MessageListModal from "../MessageListModal";
 
 type Props = {
-  messages: Message[]
-  imgArrowRight: string
-}
+  messages: Message[];
+};
 
-export default function MessageSectionClient({ messages, imgArrowRight }: Props) {
-  const [open, setOpen] = useState(false)
+export default function MessageSectionClient({ messages }: Props) {
+  const [open, setOpen] = useState(false);
 
   return (
     <>
@@ -23,7 +23,7 @@ export default function MessageSectionClient({ messages, imgArrowRight }: Props)
           메세지 전체보기
         </span>
         <div className="flex items-center justify-center w-[51px] h-full">
-          <img src={imgArrowRight} alt="" className="w-[7px] h-[15px]" />
+          <ChevronRightIcon className="w-[15px] h-[15px] text-white" />
         </div>
       </button>
 
@@ -31,5 +31,5 @@ export default function MessageSectionClient({ messages, imgArrowRight }: Props)
         <MessageListModal messages={messages} onClose={() => setOpen(false)} />
       )}
     </>
-  )
+  );
 }
