@@ -32,16 +32,16 @@ const fromTop: Variants = {
 };
 
 const fromBottom: Variants = {
-  hidden: { opacity: 0, y: 10 },
+  hidden: { opacity: 0, y: 30 },
   visible: (delay: number = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, ease: "easeOut", delay },
+    transition: { duration: 0.7, ease: "easeOut", delay },
   }),
 };
 
 const fromBottomSmall: Variants = {
-  hidden: { opacity: 0, y: 4 },
+  hidden: { opacity: 0, y: 18 },
   visible: (delay: number = 0) => ({
     opacity: 1,
     y: 0,
@@ -121,7 +121,9 @@ export default function IntroSection() {
       ref={sectionRef}
       className="flex flex-col items-center relative w-full overflow-hidden"
       style={{
-        minHeight: opened ? "min(max(100dvh, 786px), 900px)" : "min(100dvh, 900px)",
+        minHeight: opened
+          ? "min(max(100dvh, 786px), 900px)"
+          : "min(100dvh, 900px)",
         maxHeight: "900px",
         transition: "min-height 0.5s ease-in-out, max-height 0.5s ease-in-out",
       }}
@@ -236,7 +238,9 @@ export default function IntroSection() {
                   width: "30px",
                   height: "32px",
                   marginTop: "14px",
-                  transform: opened ? "scale(1)" : "scale(1.3) translate(6px, 4px)",
+                  transform: opened
+                    ? "scale(1)"
+                    : "scale(1.3) translate(20px, -6px)",
                   transition: "transform 1.2s ease-in-out",
                   willChange: "transform",
                 }}
@@ -424,7 +428,7 @@ export default function IntroSection() {
                   variants={collageContainer}
                   initial="hidden"
                   animate="visible"
-                  style={{ contain: "layout style" }}
+                  style={{ contain: "style" }}
                 >
                   <div
                     className="inline-grid place-items-start"
@@ -534,13 +538,17 @@ export default function IntroSection() {
                       variants={fromTop}
                       custom={0.64}
                       className="col-start-1 row-start-1 flex h-[151px] items-center justify-center"
-                      style={{ marginTop: "145.42px", width: "163.75px", ...GPU_STYLE }}
+                      style={{
+                        marginTop: "145.42px",
+                        width: "163.75px",
+                        ...GPU_STYLE,
+                      }}
                     >
                       <div className="h-[170px] relative w-[163px] rotate-[-10deg] translate-x-[30px]">
                         <img
                           alt=""
                           decoding="async"
-                          className="absolute block w-full h-[142px] object-cover"
+                          className="absolute block w-full h-[182px] object-cover"
                           src={"/images/intro/intro-flower-02.svg"}
                         />
                       </div>
@@ -571,9 +579,11 @@ export default function IntroSection() {
                           <div className="h-[170px] relative w-[112px] overflow-hidden">
                             <Image
                               alt=""
-                              src="/images/optimized/hyebin_11.jpeg"
+                              src="/images/original/hyebin_11.jpeg"
                               fill
                               sizes="112px"
+                              quality={95}
+                              unoptimized
                               className="object-cover scale-[2.5] translate-x-[20px] translate-y-[30px]"
                             />
                           </div>
@@ -718,7 +728,11 @@ export default function IntroSection() {
                       variants={fromTop}
                       custom={0.88}
                       className="col-start-1 row-start-1 h-[118px] w-[116px] relative"
-                      style={{ marginLeft: "221.26px", marginTop: "224px", ...GPU_STYLE }}
+                      style={{
+                        marginLeft: "221.26px",
+                        marginTop: "224px",
+                        ...GPU_STYLE,
+                      }}
                     >
                       <img
                         alt=""
