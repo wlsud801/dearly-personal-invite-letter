@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import IntroSection from "./components/sections/IntroSection";
 import RSVPButton from "./components/RSVPButton";
 import InvitationSection from "./components/sections/InvitationSection";
