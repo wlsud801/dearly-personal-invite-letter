@@ -35,7 +35,7 @@ export default function RootLayout({
         <html lang="ko" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
             <body className="min-h-full flex flex-col bg-background text-foreground overscroll-none">
                 <ScrollToTop />
-                <div className="w-full max-w-[430px] mx-auto min-h-full flex flex-col flex-1 shadow-2xl">
+                <div className="w-full max-w-[430px] mx-auto min-h-full flex flex-col flex-1 shadow-2xl overflow-x-hidden">
                     {children}
                 </div>
             </body>

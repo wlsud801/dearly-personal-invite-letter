@@ -12,6 +12,7 @@ import {
   WEDDING_YEAR,
 } from "@/app/constants/wedding";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 const collageContainer: Variants = {
@@ -519,10 +520,13 @@ export default function IntroSection() {
                       >
                         <div style={{ transform: "rotate(-8.9deg)" }}>
                           <div className="h-[152px] relative w-[146px] overflow-hidden">
-                            <img
+                            <Image
                               alt=""
-                              className="absolute w-full left-[-1%] max-w-none top-0 object-cover"
-                              src={"/images/original/hyebin_12.jpeg"}
+                              src="/images/original/hyebin_12.jpeg"
+                              fill
+                              sizes="146px"
+                              className="object-cover"
+                              style={{ left: "-1%" }}
                             />
                           </div>
                         </div>
@@ -581,10 +585,12 @@ export default function IntroSection() {
                       >
                         <div style={{ transform: "rotate(10.45deg)" }}>
                           <div className="h-[170px] relative w-[112px] overflow-hidden">
-                            <img
+                            <Image
                               alt=""
-                              className="absolute w-full left-[-1%] scale-[2.5] translate-x-[20px] translate-y-[30px] max-w-none top-0 object-cover"
-                              src={"/images/original/hyebin_11.jpeg"}
+                              src="/images/original/hyebin_11.jpeg"
+                              fill
+                              sizes="112px"
+                              className="object-cover scale-[2.5] translate-x-[20px] translate-y-[30px]"
                             />
                           </div>
                         </div>

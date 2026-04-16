@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
+import Image from 'next/image';
 import Modal from './Modal';
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from 'lucide-react';
 
@@ -59,11 +60,13 @@ export default function GalleryModal({ onClose, initialIndex = 0 }: Props) {
                 </div>
 
                 {/* 사진 */}
-                <div className="flex-1 w-full overflow-hidden flex items-center justify-center">
-                    <img
+                <div className="relative flex-1 w-full overflow-hidden">
+                    <Image
                         src={PHOTOS[current]}
                         alt={`웨딩 사진 ${current + 1}`}
-                        className="w-full h-full object-contain block"
+                        fill
+                        sizes="430px"
+                        className="object-contain"
                     />
                 </div>
 

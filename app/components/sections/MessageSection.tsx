@@ -1,4 +1,5 @@
 import { getMessages } from "@/app/actions/messages";
+import Image from "next/image";
 import MessagePenButton from "../MessagePenButton";
 import ScrollReveal from "../ScrollReveal";
 import MessageSectionClient from "./MessageSectionClient";
@@ -38,10 +39,12 @@ export default async function MessageSection() {
         <ScrollReveal delay={0.2}>
           <div className="relative w-[278px] h-[384px]  shadow-md">
             <div className="relative w-full h-full rounded-[10px] overflow-hidden">
-              <img
-                src={"/images/original/hyebin_15.jpeg"}
+              <Image
+                src="/images/original/hyebin_15.jpeg"
                 alt="웨딩 사진"
-                className="w-full h-full object-cover"
+                fill
+                sizes="278px"
+                className="object-cover"
               />
             </div>
             {/* 방명록 작성 버튼 */}

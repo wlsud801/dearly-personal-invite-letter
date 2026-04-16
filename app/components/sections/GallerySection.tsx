@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion, type Variants } from 'framer-motion';
+import Image from 'next/image';
 import GalleryModal from '../GalleryModal';
 
 const staggerParent: Variants = {
@@ -98,10 +99,12 @@ export default function GallerySection() {
                                         className="relative overflow-hidden"
                                         style={{ width: '137px', height: '207px' }}
                                     >
-                                        <img
+                                        <Image
                                             alt=""
-                                            className="absolute inset-0 max-w-none size-full object-cover"
                                             src="/images/original/hyebin_15.jpeg"
+                                            fill
+                                            sizes="137px"
+                                            className="object-cover"
                                         />
                                     </div>
                                 </div>
@@ -131,14 +134,17 @@ export default function GallerySection() {
                             <div style={{ transform: 'rotate(-6.19deg)' }}>
                                 <div className="relative overflow-hidden" style={{ width: '244px', height: '213px' }}>
                                     {/* 사진 (뒤) */}
-                                    <img
+                                    <Image
                                         alt=""
-                                        className="absolute max-w-none object-cover w-full"
+                                        src="/images/original/hyebin_01.jpeg"
+                                        fill
+                                        sizes="244px"
+                                        className="object-cover"
                                         style={{
                                             top: '20px',
                                             left: 0,
                                             right: 0,
-                                            bottom: 0,
+                                            bottom: 'auto',
                                             height: '85%',
                                             objectPosition: 'center 30%',
                                             rotate: '-6deg',
@@ -147,7 +153,6 @@ export default function GallerySection() {
                                             WebkitMaskImage: "url('/images/gallery/heart_mask.svg')",
                                             WebkitMaskSize: '100% 100%',
                                         }}
-                                        src="/images/original/hyebin_01.jpeg"
                                     />
                                     {/* 하트 프레임 (앞) */}
                                     <img
