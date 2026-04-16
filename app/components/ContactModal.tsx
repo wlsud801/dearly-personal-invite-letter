@@ -8,7 +8,7 @@ const CONTACTS = {
   groom: [
     { label: "신랑", name: "재환", phone: "010-0000-0000" },
     { label: "신랑 부", name: "손세호", phone: "010-0000-0000" },
-    { label: "신랑 모", name: "이정은", phone: "010-0000-0000" },
+    { label: "신랑 모", name: "이은정", phone: "010-0000-0000" },
   ],
   bride: [
     { label: "신부", name: "혜빈", phone: "010-0000-0000" },

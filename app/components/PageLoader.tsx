@@ -2,18 +2,16 @@
 
 import { useEffect, useState } from 'react';
 
-/** 닫힌 봉투에 필요한 이미지 — 로딩 화면 해제 조건 */
-const CRITICAL_IMAGES = [
+/** 로딩 화면 해제 전에 모두 로드해야 할 이미지 */
+const PRELOAD_IMAGES = [
+  // 닫힌 봉투
   '/images/intro/intro-bg.svg',
   '/images/intro/envelop-body.svg',
   '/images/intro/envelop-closed-flap.svg',
   '/images/intro/sticker.svg',
   '/images/intro/ampersand.svg',
   '/images/components/dot-line.svg',
-];
-
-/** 봉투 열림 후 콜라주 이미지 — 로딩 화면과 무관하게 백그라운드 프리로드 */
-const COLLAGE_IMAGES = [
+  // 열린 콜라주
   '/images/intro/envelop-back.svg',
   '/images/intro/envelop-front.svg',
   '/images/intro/intro-flower-01.svg',
@@ -31,7 +29,7 @@ function preloadImage(src: string): Promise<void> {
   return new Promise((resolve) => {
     const img = new window.Image();
     img.onload = () => resolve();
-    img.onerror = () => resolve(); // 실패해도 진행
+    img.onerror = () => resolve();
     img.src = src;
   });
 }
@@ -40,12 +38,7 @@ export default function PageLoader({ children }: { children: React.ReactNode }) 
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    // 1단계: 닫힌 봉투 이미지 로드 → 화면 표시
-    Promise.all(CRITICAL_IMAGES.map(preloadImage)).then(() => {
-      setReady(true);
-      // 2단계: 콜라주 이미지 백그라운드 프리로드 (봉투 탭 전에 미리 캐시)
-      COLLAGE_IMAGES.forEach(preloadImage);
-    });
+    Promise.all(PRELOAD_IMAGES.map(preloadImage)).then(() => setReady(true));
   }, []);
 
   return (

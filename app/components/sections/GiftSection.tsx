@@ -197,8 +197,8 @@ export default function GiftSection() {
             <AccountItem
               label="신부 모"
               name="권영희"
-              bank="기업은행"
-              account="484-003282-01-019"
+              bank="농협"
+              account="352-0769-2271-63"
             />
           </Accordion>
         </motion.div>

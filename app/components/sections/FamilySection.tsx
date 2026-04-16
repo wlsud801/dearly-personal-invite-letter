@@ -6,7 +6,7 @@ import { useState } from "react";
 import ContactModal from "../ContactModal";
 
 const FAMILIES = [
-  { dad: "손세호", mom: "이정은", order: "장남", name: "재환" },
+  { dad: "손세호", mom: "이은정", order: "장남", name: "재환" },
   { dad: "김철규", mom: "권영희", order: "차녀", name: "혜빈" },
 ];
 
