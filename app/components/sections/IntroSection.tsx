@@ -52,8 +52,10 @@ export default function IntroSection() {
   const [isOpening, setIsOpening] = useState(false);
   const [contentScale, setContentScale] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [scaledH, setScaledH] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   const toggleMusic = () => {
     const audio = audioRef.current;
@@ -101,13 +103,24 @@ export default function IntroSection() {
     return () => window.removeEventListener("resize", calc);
   }, []);
 
+  // transform: scale()은 레이아웃에 영향을 주지 않으므로 시각적 높이를 측정하여 wrapper에 반영
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el) return;
+    const measure = () => setScaledH(el.getBoundingClientRect().height);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [contentScale, opened]);
+
   return (
     <section
       ref={sectionRef}
       className="flex flex-col items-center relative w-full overflow-hidden"
       style={{
-        height: opened ? "max(100dvh, 786px)" : "100dvh",
-        transition: "height 0.5s ease-in-out",
+        minHeight: opened ? "max(100dvh, 786px)" : "100dvh",
+        transition: "min-height 0.5s ease-in-out",
       }}
     >
       <audio
@@ -173,7 +186,7 @@ export default function IntroSection() {
         />
       </div>
 
-      <div className="relative flex flex-col items-start w-full h-full">
+      <div className="relative flex flex-col items-start w-full min-h-full flex-1">
         {/* ── HEADER: 이름 + 날짜 ── */}
         <div
           className="shrink-0 flex flex-col items-start w-full"
@@ -317,8 +330,12 @@ export default function IntroSection() {
         </div>
 
         {/* ── MIDDLE: 봉투 / 콜라주 ── */}
-        <div className="flex-1 min-h-0 w-full flex flex-col items-start">
+        <div
+          className="flex-1 w-full flex flex-col items-start"
+          style={{ minHeight: scaledH > 0 ? scaledH : undefined }}
+        >
           <div
+            ref={contentRef}
             className="relative"
             style={{
               width: `${100 / contentScale}%`,
@@ -385,7 +402,7 @@ export default function IntroSection() {
                       >
                         <img
                           alt=""
-                          className="absolute h-[91.1%] left-[0.01%] max-w-none top-[4.45%] w-[99.99%]"
+                          className="absolute h-[91.1%] left-[0.01%] max-w-none top-[4.45%] w-full"
                           src={"/images/intro/sticker.svg"}
                         />
                       </div>
@@ -463,40 +480,6 @@ export default function IntroSection() {
                         </div>
                       </motion.div>
                     </motion.div>
-
-                    {/* 신부 폴라로이드 */}
-                    {/* <motion.div
-                                            variants={fromTop}
-                                            custom={0.4}
-                                            className="col-start-1 row-start-1 flex h-[279px] items-center justify-center"
-                                            style={{ marginLeft: '162.83px', width: '225.7px' }}
-                                        >
-                                            <div style={{ transform: 'rotate(-14.75deg)' }}>
-                                                <div className="h-[244px] relative w-[169px]">
-                                                    <img
-                                                        alt=""
-                                                        className="absolute block inset-0 max-w-none size-full"
-                                                        src={imgIntroBrideCard}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </motion.div> */}
-
-                    {/* 신랑 마스크 */}
-                    {/* <motion.div
-                      variants={fromTop}
-                      custom={0.48}
-                      className="col-start-1 row-start-1 inline-grid place-items-start h-[109px] w-[105px]"
-                      style={{ marginLeft: "241.13px", marginTop: "116.8px", gridTemplateColumns: "max-content", gridTemplateRows: "max-content" }}
-                    >
-                      <div className="col-start-1 row-start-1 flex h-[245px] items-center justify-center" style={{ marginLeft: "-45.56px", marginTop: "-9.19px", width: "246.55px" }}>
-                        <div style={{ transform: "rotate(-45.86deg)" }}>
-                          <div className="h-[205px] relative w-[143px]" style={{ maskImage: `url('${imgIntroGroomMask}')`, maskRepeat: "no-repeat", maskPosition: "56.098px 5.493px", maskSize: "105px 109px" }}>
-                            <img alt="" className="absolute block inset-0 max-w-none size-full" src={'/images/components/polaroid-narrow.svg'} />
-                          </div>
-                        </div>
-                      </div>
-                    </motion.div> */}
 
                     {/* 신부 사진 폴라로이드 */}
                     <motion.div
@@ -765,58 +748,6 @@ export default function IntroSection() {
                             src={"/images/intro/envelop-front.svg"}
                           />
                         </div>
-                        {/* <div
-                                                    className="col-start-1 row-start-1 h-[147px] w-[369px] relative"
-                                                    style={{ marginLeft: '0.52px', marginTop: '75px' }}
-                                                >
-                                                    <img
-                                                        alt=""
-                                                        className="absolute block inset-0 max-w-none size-full"
-                                                        src={imgIntroFlapDetail}
-                                                    />
-                                                </div> */}
-                        {/* <div
-                                                    className="col-start-1 row-start-1 h-[69px] w-[56px] relative"
-                                                    style={{ marginLeft: '156.7px', marginTop: '161.3px' }}
-                                                >
-                                                    <div className="absolute inset-0">
-                                                        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                                                            <img
-                                                                alt=""
-                                                                className="absolute h-[91.1%] left-[0.01%] max-w-none top-[4.45%] w-[99.99%]"
-                                                                src={'/images/intro/sticker.svg'}
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <p
-                                                        className="absolute text-transparent text-[34.25px]"
-                                                        style={{
-                                                            fontFamily: "'Rusilla Serif', serif",
-                                                            top: '14.46%',
-                                                            left: '37.46%',
-                                                            backgroundImage:
-                                                                'linear-gradient(118.33deg, rgba(243,243,243,0.2) 22.97%, rgba(189,189,189,0.2) 93.1%)',
-                                                            WebkitBackgroundClip: 'text',
-                                                            backgroundClip: 'text',
-                                                        }}
-                                                    >
-                                                        J
-                                                    </p>
-                                                    <p
-                                                        className="absolute text-transparent text-[34.55px]"
-                                                        style={{
-                                                            fontFamily: "'Rusilla Serif', serif",
-                                                            top: '27.86%',
-                                                            left: '45.52%',
-                                                            backgroundImage:
-                                                                'linear-gradient(143.43deg, rgba(243,243,243,0.2) 22.97%, rgba(189,189,189,0.2) 93.1%)',
-                                                            WebkitBackgroundClip: 'text',
-                                                            backgroundClip: 'text',
-                                                        }}
-                                                    >
-                                                        H
-                                                    </p>
-                                                </div> */}
                       </div>
                     </motion.div>
                   </div>
@@ -835,6 +766,7 @@ export default function IntroSection() {
               style={{
                 fontFamily: "'Pretendard', sans-serif",
                 fontSize: "clamp(13px, 3.8vw, 16px)",
+                fontWeight: 500,
               }}
             >
               <p>

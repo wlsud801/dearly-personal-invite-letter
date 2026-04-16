@@ -137,14 +137,13 @@ export default function GallerySection() {
                                     <Image
                                         alt=""
                                         src="/images/original/hyebin_01.jpeg"
-                                        fill
-                                        sizes="244px"
-                                        className="object-cover"
+                                        width={244}
+                                        height={181}
+                                        className="absolute object-cover w-full"
                                         style={{
                                             top: '20px',
                                             left: 0,
                                             right: 0,
-                                            bottom: 'auto',
                                             height: '85%',
                                             objectPosition: 'center 30%',
                                             rotate: '-6deg',
