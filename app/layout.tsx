@@ -24,7 +24,7 @@ export const metadata: Metadata = {
       "2026년 5월 31일 일요일 오전 11시 30분 | 라루체 명동 5F 그레이스홀",
     images: [
       {
-        url: "/images/original/hyebin_01.jpeg",
+        url: "/images/original/meta-img.jpeg",
         width: 1200,
         height: 630,
         alt: "혜빈 & 재환 청첩장",

@@ -119,8 +119,9 @@ export default function IntroSection() {
       ref={sectionRef}
       className="flex flex-col items-center relative w-full overflow-hidden"
       style={{
-        minHeight: opened ? "max(100dvh, 786px)" : "100dvh",
-        transition: "min-height 0.5s ease-in-out",
+        minHeight: opened ? "min(max(100dvh, 786px), 900px)" : "min(100dvh, 900px)",
+        maxHeight: "900px",
+        transition: "min-height 0.5s ease-in-out, max-height 0.5s ease-in-out",
       }}
     >
       <audio
@@ -177,11 +178,11 @@ export default function IntroSection() {
           </svg>
         )}
       </button>
-      {/* 줄무늬 배경 */}
+      {/* 줄무늬 배경 — 섹션 전체를 덮도록 */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <img
           alt=""
-          className="absolute w-full"
+          className="absolute w-full h-full object-cover object-top"
           src={"/images/intro/intro-bg.svg"}
         />
       </div>
@@ -331,7 +332,7 @@ export default function IntroSection() {
 
         {/* ── MIDDLE: 봉투 / 콜라주 ── */}
         <div
-          className="flex-1 w-full flex flex-col items-start"
+          className="w-full flex flex-col items-start"
           style={{ minHeight: scaledH > 0 ? scaledH : undefined }}
         >
           <div
@@ -759,7 +760,7 @@ export default function IntroSection() {
         {/* end MIDDLE */}
 
         {/* ── FOOTER: 위치 + 영문 날짜 ── */}
-        <div className="relative z-10 shrink-0 flex flex-col items-center w-full pb-6">
+        <div className="relative z-10 shrink-0 mt-auto flex flex-col items-center w-full pb-6">
           <div className="flex items-center justify-center px-2 py-[10px] w-full">
             <div
               className="text-black text-center tracking-[-0.03em] leading-[1.6]"

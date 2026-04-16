@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import PageLoader from "@/app/components/PageLoader";
 import IntroSection from "@/app/components/sections/IntroSection";
 import RSVPButton from "@/app/components/RSVPButton";
 import InvitationSection from "@/app/components/sections/InvitationSection";
@@ -14,18 +15,20 @@ import ThanksSection from "@/app/components/sections/ThanksSection";
 
 export default function Page() {
   return (
-    <main className="flex flex-col w-full">
-      <RSVPButton />
-      <IntroSection />
-      <InvitationSection />
-      <FamilySection />
-      <CalendarSection />
-      <GallerySection />
-      <NoticeSection />
-      <MessageSection />
-      <LocationSection />
-      <GiftSection />
-      <ThanksSection />
-    </main>
+    <PageLoader>
+      <main className="flex flex-col w-full">
+        <RSVPButton />
+        <IntroSection />
+        <InvitationSection />
+        <FamilySection />
+        <CalendarSection />
+        <GallerySection />
+        <NoticeSection />
+        <MessageSection />
+        <LocationSection />
+        <GiftSection />
+        <ThanksSection />
+      </main>
+    </PageLoader>
   );
 }
