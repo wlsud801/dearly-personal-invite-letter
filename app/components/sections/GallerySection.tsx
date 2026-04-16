@@ -25,8 +25,8 @@ export default function GallerySection() {
     const [modalIndex, setModalIndex] = useState(0);
     const [modalOpen, setModalOpen] = useState(false);
 
-    const openModal = (index: number) => {
-        setModalIndex(index);
+    const openModal = () => {
+        setModalIndex(0);
         setModalOpen(true);
     };
 
@@ -64,7 +64,7 @@ export default function GallerySection() {
                                 height: '280px',
                                 marginLeft: '20px',
                             }}
-                            onClick={() => openModal(0)}
+                            onClick={() => openModal()}
                         >
                             {/* 봉투 몸체 */}
                             <div
@@ -79,7 +79,7 @@ export default function GallerySection() {
                         <motion.div
                             variants={fadeUpChild}
                             className="col-start-1 row-start-1 inline-grid place-items-start cursor-pointer"
-                            onClick={() => openModal(14)}
+                            onClick={() => openModal()}
                             style={{
                                 width: '225px',
                                 height: '287px',
@@ -129,7 +129,7 @@ export default function GallerySection() {
                             variants={fadeUpChild}
                             className="col-start-1 row-start-1 flex items-center justify-center cursor-pointer"
                             style={{ width: '265px', height: '238px', marginLeft: '30px', marginTop: '231px' }}
-                            onClick={() => openModal(0)}
+                            onClick={() => openModal()}
                         >
                             <div style={{ transform: 'rotate(-6.19deg)' }}>
                                 <div className="relative overflow-hidden" style={{ width: '244px', height: '213px' }}>
