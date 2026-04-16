@@ -25,7 +25,7 @@ function AccountItem({ label, name, bank, account }: AccountItemProps) {
             <span className="text-[#99958f] text-[14px] tracking-[-0.56px]">
               {bank}
             </span>
-            <CopyButton text={account} />
+            <CopyButton text={`${bank} ${account}`} />
           </div>
           <div className="flex items-center py-[5px]">
             <p className="flex-1 text-[14px] text-black tracking-[-0.56px]">

@@ -1,7 +1,6 @@
 "use client";
 
 import { motion, type Variants } from "framer-motion";
-import { ArrowRightIcon } from "lucide-react";
 import { useState } from "react";
 import ContactModal from "../ContactModal";
 
@@ -52,7 +51,7 @@ export default function FamilySection() {
         </div>
 
         {/* 축하 연락하기 버튼 */}
-        <motion.button
+        {/* <motion.button
           type="button"
           onClick={() => setOpen(true)}
           variants={fromBottom}
@@ -66,7 +65,7 @@ export default function FamilySection() {
             축하 연락하기
           </span>
           <ArrowRightIcon className="w-[19px] h-[19px] text-white" />
-        </motion.button>
+        </motion.button> */}
       </div>
 
       {open && <ContactModal onClose={() => setOpen(false)} />}

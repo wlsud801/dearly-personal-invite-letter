@@ -101,7 +101,7 @@ export default function LocationSection() {
               <span className="text-black text-[16px] font-medium tracking-[-0.64px]">
                 라루체 웨딩
               </span>
-              <CallButton phone="02-0000-0000" />
+              <CallButton phone="02-766-8200" />
             </div>
             <div className="flex items-center gap-2 h-[30px]">
               <span className="text-[#99958f] text-[16px] tracking-[-0.64px]">
