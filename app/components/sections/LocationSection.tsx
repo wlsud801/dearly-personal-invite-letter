@@ -4,6 +4,7 @@ import { motion, type Variants } from "framer-motion";
 import CallButton from "../CallButton";
 import CopyButton from "../CopyButton";
 import { useToast } from "../Toast";
+import KakaoMap from "../KakaoMap";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -128,12 +129,12 @@ export default function LocationSection() {
               width: "calc(100% + 96px)",
             }}
           >
-            {/* <KakaoMap /> */}
-            <img
+            <KakaoMap />
+            {/* <img
               src={"/images/map/map_01.jpg"}
               alt=""
               className="w-full h-full object-cover"
-            />
+            /> */}
           </div>
           <div className="flex gap-2.5 w-full">
             <button
