@@ -1,0 +1,19 @@
+/* brown-lace RSVP 씰 전용 모션.
+   CSS Module 이라 keyframe 이름이 해시되어 전역과 충돌하지 않는다.
+   `translate` 속성만 애니메이션해 부모 버튼의 등장 transition(translate/opacity)
+   과 겹치지 않게 한다(바운스는 안쪽 이미지에만 적용). */
+
+/* 살짝 위아래로 떠다니는 미세 바운스. */
+.bounce {
+  animation: rsvpBounce 1.6s ease-in-out infinite;
+}
+
+@keyframes rsvpBounce {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -6px;
+  }
+}
