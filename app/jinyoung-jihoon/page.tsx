@@ -12,6 +12,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: "진영 ❤️ 지훈 결혼합니다.",
     description: "따뜻한 가을의 문턱에서, 저희의 첫걸음을 함께 축복해 주세요.",
+    images: [
+      {
+        url: "/assets/templates/brown-lace/thumbnail.jpg",
+        width: 800,
+        height: 480,
+        alt: "진영 & 지훈 청첩장",
+      },
+    ],
   },
 };
 
