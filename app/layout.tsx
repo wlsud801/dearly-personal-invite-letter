@@ -17,9 +17,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL ??
-      (process.env.VERCEL_PROJECT_PRODUCTION_URL
-        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-        : "http://localhost:3000"),
+      "https://dearly-personal-invite-letter-wlsud801s-projects.vercel.app",
   ),
   title: "혜빈 ❤️ 재환 결혼합니다.",
   description:
