@@ -15,6 +15,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ??
+      (process.env.VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+        : "http://localhost:3000"),
+  ),
   title: "혜빈 ❤️ 재환 결혼합니다.",
   description:
     "혜빈과 재환의 결혼식에 초대합니다. 2026년 5월 31일 일요일 오전 11시 30분 | 라루체 명동 5F 그레이스홀",
