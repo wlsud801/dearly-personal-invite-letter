@@ -49,15 +49,67 @@
   font-display: swap;
 }
 
+/* ── brown-lace 템플릿 폰트 ──────────────────────────────────────────────── */
+@font-face {
+  font-family: 'Aurora Moonlight';
+  src: url('/fonts/Aurora Moonlight.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Roaming';
+  src: url('/fonts/Roaming.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Altesse Std';
+  src: url('/fonts/AltesseStd-DEMO-Regular38pt.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Filmotype Yukon';
+  src: url('/fonts/filmotype-yukon.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Maltiner Display';
+  src: url('/fonts/Maltiner Display.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* ── CSS 변수 & 테마 ─────────────────────────────────────────────────────── */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* brown-lace theme.ts 가 참조하는 폰트 변수 (font-family 이름으로 해석) */
+  --font-pretendard: 'Pretendard';
+  --font-aurora: 'Aurora Moonlight';
+  --font-badoney: 'Badoney';
+  --font-roaming: 'Roaming';
+  --font-filmotype: 'Filmotype Yukon';
+  --font-maltiner: 'Maltiner Display';
+  --font-altesse: 'Altesse Std';
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  /* dearly-frontend 디자인 토큰 — brown-lace 템플릿 셸이 참조 */
+  --color-label-neutral-primary: #322825;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -118,23 +170,16 @@ button img,
 }
 
 /* ── 스크롤바 ────────────────────────────────────────────────────────────── */
+/* 스크롤바 전체 숨김 — 스크롤 동작은 유지하고 UI만 감춘다 */
 /* Webkit (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+  display: none;
+  width: 0;
+  height: 0;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: #D7B6A2;
-  border-radius: 9999px;
-}
-
-/* Firefox */
+/* Firefox / IE */
 * {
-  scrollbar-width: thin;
-  scrollbar-color: #D7B6A2 transparent;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
