@@ -125,14 +125,14 @@ export const SAMPLE_INVITATION: InvitationData = {
         {
           role: "신랑",
           name: "박지훈",
-          bank: "우리은행",
-          number: "1002-939-574815",
+          bank: "신한은행",
+          number: "110-562-658257",
         },
         {
           role: "신랑 모",
           name: "김정악",
-          bank: "기업은행",
-          number: "080-011878-02-030",
+          bank: "새마을금고",
+          number: "9002-2062-9929-6",
         },
       ],
     },
@@ -143,7 +143,7 @@ export const SAMPLE_INVITATION: InvitationData = {
           role: "신부",
           name: "김진영",
           bank: "국민은행",
-          number: "0264-01-04253-740",
+          number: "026401-04-253740",
         },
       ],
     },
@@ -156,10 +156,7 @@ export const SAMPLE_INVITATION: InvitationData = {
     ],
     // 바깥 배열 = 문단, 안쪽 배열 = 문단 내 줄. 문단 사이엔 렌더링 gap 이 들어간다.
     thanks: [
-      [
-        "보내주시는 따뜻한 축복과 응원에",
-        "진심으로 감사드립니다.",
-      ],
+      ["보내주시는 따뜻한 축복과 응원에", "진심으로 감사드립니다."],
       [
         "그 마음에 보답할 수 있도록",
         "오래도록 다정한 부부로",
