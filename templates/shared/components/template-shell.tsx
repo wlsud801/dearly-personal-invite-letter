@@ -79,7 +79,9 @@ export function TemplateShell({
             data-section={section.id}
             className={
               isHorizontal
-                ? "overlay-scrollbar flex h-full w-full shrink-0 snap-center flex-col overflow-y-auto"
+                ? // snap-always: 세게 플링해도 스냅 지점을 건너뛰지 못하게
+                  // 강제 — 스와이프 한 번에 정확히 한 카드씩만 넘어간다.
+                  "overlay-scrollbar flex h-full w-full shrink-0 snap-center snap-always flex-col overflow-y-auto"
                 : "w-full"
             }
           >

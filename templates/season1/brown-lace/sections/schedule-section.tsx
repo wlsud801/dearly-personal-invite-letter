@@ -163,8 +163,11 @@ export function ScheduleSection() {
                 >
                   {isWedding && <WeddingHeart />}
                   {day && (
+                    /* z-10: 하트 pop 애니메이션 중 img 가 컴포지팅 레이어로
+                       승격되면 z-index auto 끼리는 순서가 뒤집혀 숫자를 가린다.
+                       명시적 z-index 로 숫자를 항상 하트 위에 고정. */
                     <span
-                      className="relative"
+                      className="relative z-10"
                       style={{
                         fontFamily: FONT.aurora,
                         fontSize: 16,

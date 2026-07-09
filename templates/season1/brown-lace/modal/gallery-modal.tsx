@@ -78,17 +78,14 @@ export function GalleryModal({ open, onClose }: GalleryModalProps) {
             화면이 작아 넘치면 margin 이 0 으로 접혀 평소처럼 위에서부터 스크롤된다. */}
         <div className="my-auto flex w-full flex-col gap-5">
           {/* 메인 사진 */}
-          <div
-            className="aspect-[134/194] w-full overflow-hidden rounded-lg"
-            style={{ backgroundColor: COLOR.surface }}
-          >
+          <div className="aspect-[134/194] w-full overflow-hidden rounded-lg">
             {main && (
               // key=index: 사진이 바뀔 때마다 img 를 새로 마운트해 페이드인을 재생한다.
               <img
                 key={index}
                 alt=""
                 src={main}
-                className={`size-full object-cover ${styles.fadeIn}`}
+                className={`size-full object-contain ${styles.fadeIn}`}
                 draggable={false}
               />
             )}
