@@ -98,7 +98,7 @@ export const SAMPLE_INVITATION: InvitationData = {
         items: [
           {
             head: "네비게이션 : 서울 강남구 논현로 742 또는 루클라비더화이트 검색",
-            sub: "주차장이 협소하로니 대중교통을 이용하시는 것이 훨씬 편리합니다.",
+            sub: "주차장이 협소하오니 대중교통을 이용하시는 것이 훨씬 편리합니다.",
           },
         ],
       },

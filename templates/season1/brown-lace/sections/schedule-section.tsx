@@ -163,11 +163,13 @@ export function ScheduleSection() {
                 >
                   {isWedding && <WeddingHeart />}
                   {day && (
-                    /* z-10: 하트 pop 애니메이션 중 img 가 컴포지팅 레이어로
-                       승격되면 z-index auto 끼리는 순서가 뒤집혀 숫자를 가린다.
-                       명시적 z-index 로 숫자를 항상 하트 위에 고정. */
+                    /* z-10 + transform-gpu: 하트 pop 애니메이션 중 img 가
+                       컴포지팅 레이어로 승격되면 iOS Safari 는 합성되지 않은
+                       형제의 z-index 를 무시하고 img 를 위에 그린다(애니메이션
+                       동안 숫자가 사라졌다 재등장). 숫자도 자체 레이어로
+                       승격시켜야 애니메이션 내내 z-order 가 유지된다. */
                     <span
-                      className="relative z-10"
+                      className="relative z-10 transform-gpu"
                       style={{
                         fontFamily: FONT.aurora,
                         fontSize: 16,
