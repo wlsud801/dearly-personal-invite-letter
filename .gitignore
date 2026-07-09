@@ -40,3 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .gstack/
+
+# claude code (로컬 설정·worktree — 커밋 금지)
+.claude/
