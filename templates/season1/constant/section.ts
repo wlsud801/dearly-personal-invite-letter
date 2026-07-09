@@ -28,11 +28,11 @@ export const SECTIONS: Section[] = [
   { id: "cover", label: "표지", hideable: false },
   { id: "greeting", label: "인삿말", hideable: true },
   { id: "schedule", label: "일정 정보", hideable: true },
+  { id: "venue", label: "장소 정보", hideable: true },
   { id: "album", label: "앨범", hideable: true },
-  { id: "reception", label: "피로연 안내", hideable: true },
   { id: "guestbook", label: "방명록", hideable: true },
   { id: "fullImage", label: "풀 이미지", hideable: true },
-  { id: "venue", label: "장소 정보", hideable: true },
+  { id: "reception", label: "피로연 안내", hideable: true },
   { id: "account", label: "계좌 정보", hideable: true },
   { id: "share", label: "공유하기", hideable: true },
 ];
