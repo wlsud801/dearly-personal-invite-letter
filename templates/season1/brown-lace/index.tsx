@@ -15,6 +15,7 @@ import {
   type SectionId,
 } from "@/templates/season1/constant/section";
 import {
+  getVisibleSections,
   InvitationProvider,
   TemplateShell,
   ToastHost,
@@ -28,6 +29,7 @@ import {
 import { BrownLaceDefs } from "./effects";
 import { IntroProvider } from "./intro-context";
 import { MusicButton } from "./music-button";
+import { PageDots } from "./page-dots";
 import { RsvpButton } from "./rsvp-button";
 import { AccountSection } from "./sections/account-section";
 import { AlbumSection } from "./sections/album-section";
@@ -74,6 +76,15 @@ function BrownLaceTemplate({
   // 감사장 모드는 감사장 전용 페이지만, 청첩장 모드는 기존 섹션 목록을 렌더한다.
   // (sections 가 undefined 면 shell 이 기본 SECTIONS 로 폴백)
   const resolvedSections = letterType === "thanks" ? THANKS_SECTIONS : sections;
+  // 페이지 도트용 — 셸과 동일한 규칙(기본 SECTIONS 폴백 + 숨김 필터)으로
+  // 실제 렌더되는 카드 목록을 재현해 점 개수/순서를 맞춘다.
+  // 여기에 더해 카드로 보이지 않는 섹션은 제외한다:
+  //  - cover: 표지 모션이 끝나면 카드가 접혀 스냅 대상에서 빠진다(도트는 그 후에야 표시됨)
+  //  - 미등록 섹션(fullImage 등): 컴포넌트가 없어 셸이 카드를 렌더하지 않는다
+  const dotSections = getVisibleSections(
+    resolvedSections ?? SECTIONS,
+    shell.hiddenSections,
+  ).filter((section) => section.id !== "cover" && SECTION_COMPONENTS[section.id]);
   return (
     <InvitationProvider data={data} mode={mode} editor={editor}>
       <BrownLaceDefs />
@@ -93,6 +104,8 @@ function BrownLaceTemplate({
           {letterType !== "thanks" ? <RsvpButton /> : null}
           {/* BGM 토글 — 좌측 상단, 표지 모션이 끝난 뒤 페이드인 */}
           <MusicButton />
+          {/* 가로 모드 전용 페이지 도트 — 하단 중앙, 현재 카드 표시 + 탭 이동 */}
+          <PageDots sections={dotSections} />
           {/* 가로 모드 전용 스와이프 넛지 — 표지 모션이 끝난 뒤 카드가 살짝
               왼쪽으로 밀렸다 돌아오며 다음 카드를 암시. (세로 모드는 no-op) */}
           <SwipeNudge />

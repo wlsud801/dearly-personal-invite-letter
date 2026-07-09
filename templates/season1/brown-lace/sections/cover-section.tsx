@@ -1,4 +1,8 @@
-import { Editable, useCoverScrollLock, useInvitationData } from "@/templates/shared";
+import {
+  Editable,
+  useCoverScrollLock,
+  useInvitationData,
+} from "@/templates/shared";
 import { useEffect, useRef, useState } from "react";
 import { ASSET } from "../assets";
 import styles from "../cover.module.css";
@@ -7,6 +11,8 @@ import { COLOR, EFFECT, FONT } from "../theme";
 
 /** 표지 열림 모션 전체 길이(ms). 가장 긴 트랜지션 = delay 1000 + duration 2500. */
 const OPEN_ANIM_MS = 3500;
+/** 열림 모션이 끝난 뒤 편지지를 그대로 보여주는 시간(ms). 지나면 greeting 으로 전환. */
+const HOLD_AFTER_OPEN_MS = 2000;
 
 function CoverSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -41,7 +47,7 @@ function CoverSection() {
     const t = setTimeout(() => {
       setDone(true);
       markCoverDone();
-    }, OPEN_ANIM_MS);
+    }, OPEN_ANIM_MS + HOLD_AFTER_OPEN_MS);
     return () => clearTimeout(t);
   }, [opened, markCoverDone]);
 
@@ -276,7 +282,7 @@ function CoverSection() {
       {!opened && (
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-6 z-20 flex justify-center"
+          className="pointer-events-none absolute inset-x-0 top-[30%] z-20 flex justify-center"
         >
           <span
             className="animate-pulse tracking-[0.3em]"
@@ -285,7 +291,8 @@ function CoverSection() {
               fontSize: 12,
               color: COLOR.muted,
             }}
-          >봉투를 클릭해주세요
+          >
+            클릭해주세요
           </span>
         </div>
       )}
