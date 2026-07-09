@@ -67,7 +67,9 @@ export function PageDots({ sections }: PageDotsProps) {
         coverDone ? "opacity-100" : "pointer-events-none opacity-0"
       }`}
     >
-      <div className="flex items-center rounded-full bg-[#3A312A]/45 px-1.5 py-1 shadow backdrop-blur-sm">
+      {/* backdrop-blur 금지 — iOS Safari 에서 자식 너비 애니메이션과 겹치면
+          블러 레이어가 재도색되지 않아 흰색 잔상 바가 남는다. */}
+      <div className="flex items-center rounded-full bg-[#3A312A]/45 px-1.5 py-1 shadow">
         {sections.map((section, i) => (
           <button
             key={section.id}
@@ -79,7 +81,7 @@ export function PageDots({ sections }: PageDotsProps) {
             className="flex h-5 items-center px-[3px]"
           >
             <span
-              className={`h-1.5 rounded-full transition-all duration-300 ease-out ${
+              className={`h-1.5 transform-gpu rounded-full transition-all duration-300 ease-out ${
                 i === current ? "w-4" : "w-1.5"
               }`}
               style={{
