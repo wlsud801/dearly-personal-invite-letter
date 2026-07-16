@@ -11,23 +11,36 @@
 /*  색상·폰트는 Figma 노드 데이터에서 추출. absolute 좌표 대신 flex column 으로       */
 /*  내용을 세로로 쌓아 높이는 내용이 결정한다(반응형). 배경(레이스 페이퍼)만          */
 /*  뒤에 깔리는 absolute 레이어로 두고, 콘텐츠는 그 위에서 자연스럽게 흐른다.         */
+/*                                                                             */
+/*  표지 → 인삿말 전환 (Figma 530:1652 시퀀스):                                  */
+/*   1. 표지 편지지가 도착한 위치·텍스트와 이 섹션의 상단 블록이 동일하다.          */
+/*   2. coverDone → 표지 안의 확장 오버레이(편지지 영역 → 전체 화면)가 FILL_MS     */
+/*      동안 화면을 채운 뒤 표지가 즉시 사라진다. 이 섹션은 페이드 없이 그대로       */
+/*      드러난다 — 확장 완료 화면과 이 섹션의 초기 화면이 동일해 이음새가 없다.      */
+/*   3. 그 뒤(coverDone + FILL_MS) 하단(디바이더·혼주·버튼)이 아래에서 위로         */
+/*      나타난다.                                                               */
 /* -------------------------------------------------------------------------- */
 
 import { Editable, useInvitationData, type Person } from "@/templates/shared";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import RoughButton from "@/templates/season1/components/rough-button";
 import { ASSET } from "../assets";
-import { CardReveal } from "../card-reveal";
 import { useIntro } from "../intro-context";
 import { COLOR, FONT } from "../theme";
 import { CongratsModal } from "../modal/congrats-modal";
 import { RsvpModal } from "../modal/rsvp-modal";
 
-/** 보조 텍스트(의·관계·영문) 그레이 — Figma #99958f */
-const SUB = "#99958f";
+/** 보조 텍스트(의·관계·영문) 그레이 — Figma #99958f. 표지 편지지도 같은 값을 쓴다. */
+export const SUB = "#99958f";
 
-/** 본문(한글) 공통 스타일 — Pretendard Medium 16 / brown #7C6D5F */
-const bodyStyle = {
+/**
+ * 표지 편지지 확장 시간(ms) — cover 의 확장 오버레이 애니메이션과 하단 콘텐츠
+ * 등장 시점을 동기화한다. 이 시간이 지나면 하단 콘텐츠가 아래에서 위로 올라온다.
+ */
+export const FILL_MS = 1200;
+
+/** 본문(한글) 공통 스타일 — Pretendard Medium 16 / brown #7C6D5F. 표지 편지지와 공유. */
+export const bodyStyle = {
   fontFamily: FONT.pretendard,
   fontWeight: 500,
   fontSize: 16,
@@ -85,8 +98,15 @@ function ParentRow({ person }: { person: Person }) {
 
 export function GreetingSection() {
   const { groom, bride, greeting } = useInvitationData();
-  // 표지 모션이 끝나면 dim(페이드인)으로 나타난다.
   const { coverDone, isHorizontal } = useIntro();
+  // coverDone → 표지 확장 오버레이(FILL_MS) → filled(하단 콘텐츠 상승) 순서.
+  // Provider 밖(단독 렌더)에서는 coverDone 이 처음부터 true 라 즉시 최종 상태다.
+  const [filled, setFilled] = useState(coverDone);
+  useEffect(() => {
+    if (!coverDone || filled) return;
+    const t = setTimeout(() => setFilled(true), FILL_MS);
+    return () => clearTimeout(t);
+  }, [coverDone, filled]);
   // "축하 연락하기" / "참석 여부 전달" 모달 열림 여부
   const [congratsOpen, setCongratsOpen] = useState(false);
   const [rsvpOpen, setRsvpOpen] = useState(false);
@@ -94,16 +114,19 @@ export function GreetingSection() {
   return (
     <section
       aria-label="인삿말"
-      className={`relative w-full select-none overflow-hidden drop-shadow-[0px_-2px_8px_rgba(101,89,79,0.2)] transition-opacity duration-1000 ease-in-out ${
-        // 가로(카드) 모드: 카드 높이(100cqh)를 채우므로 콘텐츠를 세로 중앙에 배치
-        isHorizontal ? "flex flex-col justify-center" : ""
-      }`}
+      // 가로(카드) 모드에서도 세로 중앙 정렬 없이 상단(pt-[88px])부터 흐른다 —
+      // 표지 확장 오버레이의 텍스트 위치(y 88px)와 동일해야 전환 시 점프가 없다.
+      className="relative w-full select-none overflow-hidden drop-shadow-[0px_-2px_8px_rgba(101,89,79,0.2)]"
       style={{
         backgroundColor: COLOR.background,
-        opacity: coverDone ? 1 : 0,
-        // 가로(카드) 모드: 카드 높이만큼 채워 배경 이미지가 화면을 꽉 채우게 한다.
-        // 100cqh = shell([container-type:size]) 높이 = 카드 높이. 내용이 더 길면 늘어난다.
-        minHeight: isHorizontal ? "100cqh" : undefined,
+        // 페이드인 없음 — 표지의 확장 완료 화면과 동일해 그대로 드러난다.
+        // 가로(카드) 모드에서만 표지 열림 전까지 감춰 넛지 peek 로 새어 보이지
+        // 않게 한다(카드가 화면 밖에 있을 때 즉시 전환되므로 페이드가 아니다).
+        opacity: isHorizontal && !coverDone ? 0 : 1,
+        // 표지의 확장 완료 화면(100cqh 꽉 찬 배경)과 동일한 높이가 되도록
+        // 두 모드 모두 뷰포트/카드 높이(100cqh = shell [container-type:size])만큼
+        // 채운다. 내용이 더 길면 늘어난다.
+        minHeight: "100cqh",
       }}
     >
       {/* 크림 페이퍼(레이스 보더) 배경 — 뒤에 깔리는 레이어 */}
@@ -115,8 +138,9 @@ export function GreetingSection() {
       />
 
       {/* 내용 — flex column 으로 위에서 아래로 자연스럽게 흐른다.
-          가로 모드: 배경(레이스 페이퍼)은 두고 이 콘텐츠만 아래→위 페이드인 */}
-      <CardReveal className="relative flex flex-col w-full items-center gap-7 px-6 pb-20 pt-[88px] text-center">
+          표지의 확장 오버레이와 같은 화면이어야 하므로 CardReveal(페이드인) 없이
+          그대로 렌더한다. 하단 블록만 filled 시점에 아래→위로 나타난다. */}
+      <div className="relative flex flex-col w-full items-center gap-7 px-6 pb-20 pt-[88px] text-center">
         {/* ===== 인사말 + 신랑·신부 + 영문 클로징 ===== */}
         <div className="flex w-full flex-col items-center gap-5">
           <Editable field="greeting" label="인사말" className="w-full">
@@ -177,44 +201,54 @@ export function GreetingSection() {
           </Editable>
         </div>
 
-        {/* 플로럴 디바이더 */}
-        <img
-          alt=""
-          aria-hidden
-          src={ASSET.divide}
-          className="w-full max-w-[242px]"
-        />
-
-        {/* ===== 양가 혼주 정보 ===== */}
-        <div className="flex justify-center flex-col">
-          <Editable field="parents.groom" label="신랑 혼주 정보">
-            <ParentRow person={groom} />
-          </Editable>
-          <Editable field="parents.bride" label="신부 혼주 정보">
-            <ParentRow person={bride} />
-          </Editable>
-        </div>
-
-        {/* ===== 액션 버튼 (축하 연락하기 / 참석 여부 전달) — RoughButton ===== */}
-        <div className="flex w-full justify-center gap-3">
-          <RoughButton
-            label="축하 연락하기"
-            variant="filled"
-            colorType="green"
-            arrow
-            onClick={() => setCongratsOpen(true)}
-            className="min-w-0 flex-1"
+        {/* ===== 하단 콘텐츠 — 배경이 꽉 찬 뒤 아래에서 위로 서서히 나타난다 ===== */}
+        <div
+          className="flex w-full flex-col items-center gap-7"
+          style={{
+            opacity: filled ? 1 : 0,
+            transform: filled ? "translateY(0)" : "translateY(24px)",
+            transition: "opacity 1s ease-out, transform 1s ease-out",
+          }}
+        >
+          {/* 플로럴 디바이더 */}
+          <img
+            alt=""
+            aria-hidden
+            src={ASSET.divide}
+            className="w-full max-w-[242px]"
           />
-          <RoughButton
-            label="참석 여부 전달"
-            variant="filled"
-            colorType="green"
-            arrow
-            onClick={() => setRsvpOpen(true)}
-            className="min-w-0 flex-1"
-          />
+
+          {/* ===== 양가 혼주 정보 ===== */}
+          <div className="flex justify-center flex-col">
+            <Editable field="parents.groom" label="신랑 혼주 정보">
+              <ParentRow person={groom} />
+            </Editable>
+            <Editable field="parents.bride" label="신부 혼주 정보">
+              <ParentRow person={bride} />
+            </Editable>
+          </div>
+
+          {/* ===== 액션 버튼 (축하 연락하기 / 참석 여부 전달) — RoughButton ===== */}
+          <div className="flex w-full justify-center gap-3">
+            <RoughButton
+              label="축하 연락하기"
+              variant="filled"
+              colorType="green"
+              arrow
+              onClick={() => setCongratsOpen(true)}
+              className="min-w-0 flex-1"
+            />
+            <RoughButton
+              label="참석 여부 전달"
+              variant="filled"
+              colorType="green"
+              arrow
+              onClick={() => setRsvpOpen(true)}
+              className="min-w-0 flex-1"
+            />
+          </div>
         </div>
-      </CardReveal>
+      </div>
 
       {/* 축하 연락하기 / 참석 여부(RSVP) 모달 */}
       <CongratsModal open={congratsOpen} onClose={() => setCongratsOpen(false)} />

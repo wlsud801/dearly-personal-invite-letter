@@ -1,9 +1,11 @@
 /* brown-lace 표지 전용 모션.
    CSS Module 이라 keyframe 이름이 해시되어 전역과 충돌하지 않는다. */
 
-/* 편지지가 봉투와 함께 살짝 내려갔다가(40%→55%) 다시 위로 떠오른다(→0%).
+/* 편지지가 봉투와 함께 살짝 내려갔다가 다시 위로 떠오른다.
    Tailwind v4의 -translate-x-1/2 와 같은 `translate` 속성을 애니메이션해
-   X 이동(가로 중앙정렬)이 중복되지 않게 한다. */
+   X 이동(가로 중앙정렬)이 중복되지 않게 한다.
+   도착값 -6px: 편지지 내부 텍스트(top 94px)가 화면 y=88px 에 놓여
+   greeting 섹션의 텍스트(pt-[88px])와 정확히 겹치는 위치다. */
 .letterDipRise {
   animation: letterDipRise 2s ease-in-out 1s both;
 }
@@ -16,6 +18,6 @@
     translate: -50% 40%;
   }
   100% {
-    translate: -50% 10%;
+    translate: -50% -6px;
   }
 }

@@ -8,11 +8,29 @@ import { ASSET } from "../assets";
 import styles from "../cover.module.css";
 import { useIntro } from "../intro-context";
 import { COLOR, EFFECT, FONT } from "../theme";
+import { FILL_MS, SUB, bodyStyle } from "./greeting-section";
 
-/** 표지 열림 모션 전체 길이(ms). 가장 긴 트랜지션 = delay 1000 + duration 2500. */
-const OPEN_ANIM_MS = 3500;
-/** 열림 모션이 끝난 뒤 편지지를 그대로 보여주는 시간(ms). 지나면 greeting 으로 전환. */
-const HOLD_AFTER_OPEN_MS = 2000;
+/**
+ * 편지지 도착 시점(ms) = letterDipRise delay 1000 + duration 2000.
+ * 도착 즉시 확장을 시작한다. 봉투 모션(delay 1000 + duration 2500)은 그 뒤에도
+ * 잠깐 이어지지만 확장 오버레이가 위를 덮으므로 보이지 않는다.
+ */
+const OPEN_ANIM_MS = 3000;
+
+/**
+ * 확장 오버레이의 시작 클립 — 도착한 편지지(intro-letter.png 782×875, 402px 폭)의
+ * 크림 영역(테두리 안쪽 x 13~389 / y 8~430, 모서리 라운드)과 일치한다.
+ * 여기서 화면 전체(BG_CLIP_FULL)로 FILL_MS 동안 확장된다.
+ */
+const BG_CLIP_LETTER = "inset(8px 13px calc(100% - 430px) 13px round 14px)";
+const BG_CLIP_FULL = "inset(0px 0px 0px 0px round 0px)";
+
+/**
+ * 표지 퇴장 크로스페이드(ms). 확장 완료 화면과 greeting 이 동일해 페이드 자체는
+ * 보이지 않지만, display 제거를 한 프레임에 하면 뒤 섹션을 새로 페인트하면서
+ * 깜박일 수 있어 아주 짧게 겹쳐서 사라지게 한다.
+ */
+const SWAP_FADE_MS = 250;
 
 function CoverSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -20,9 +38,13 @@ function CoverSection() {
   // 뚜껑은 위로 사라지고, 봉투(열린 뚜껑·몸통·뒷배경)는 시차를 두고 하단으로 내려가며,
   // 그 사이 편지지가 위로 떠올라 최종 화면(Figma 128:42278)이 된다.
   const [opened, setOpened] = useState(false);
-  // 열림 모션이 끝나면 표지를 dim(페이드아웃)으로 감추고 greeting 으로 전환한다.
+  // 열림 모션이 끝나 편지지가 도착했는지. 이때부터 확장 오버레이가 화면을 채운다.
   const [done, setDone] = useState(false);
-  // 가로 모드: 페이드아웃이 끝난 뒤 표지 카드를 완전히 접었는지.
+  // 확장(FILL_MS)까지 끝나 표지 퇴장 크로스페이드를 시작했는지.
+  const [hidden, setHidden] = useState(false);
+  // 크로스페이드(SWAP_FADE_MS)까지 끝나 표지를 페인트에서 제거했는지.
+  const [gone, setGone] = useState(false);
+  // 가로 모드: 확장이 끝난 뒤 표지 카드를 완전히 접었는지.
   const [collapsed, setCollapsed] = useState(false);
   const { markCoverDone, isHorizontal } = useIntro();
 
@@ -33,31 +55,46 @@ function CoverSection() {
   ).padStart(2, "0")}`;
 
   // 열림 모션 동안엔 다음 섹션으로 스크롤되지 않도록 스크롤 컨테이너를 잠근다.
-  // 세로=overflowY(아래 greeting), 가로=overflowX(옆 카드). 가로는 페이드아웃 도중
-  // 스와이프로 위치가 어긋나지 않도록 카드 접기(collapsed)까지 잠금을 유지한다.
+  // 세로=overflowY(아래 greeting), 가로=overflowX(옆 카드). 확장이 끝나 표지가
+  // 감춰질 때(세로=hidden, 가로=collapsed)까지 잠금을 유지한다.
   useCoverScrollLock(
     sectionRef,
-    isHorizontal ? collapsed : done,
+    isHorizontal ? collapsed : hidden,
     isHorizontal ? "x" : "y",
   );
 
-  // 클릭 후 모션이 끝나는 시점에 표지를 감추고 greeting 전환을 알린다.
+  // 클릭 후 편지지가 도착하는 시점에 지체 없이 확장을 시작하고 greeting 에 알린다.
   useEffect(() => {
     if (!opened) return;
     const t = setTimeout(() => {
       setDone(true);
       markCoverDone();
-    }, OPEN_ANIM_MS + HOLD_AFTER_OPEN_MS);
+    }, OPEN_ANIM_MS);
     return () => clearTimeout(t);
   }, [opened, markCoverDone]);
 
-  // 가로 모드: 페이드아웃(section opacity transition, duration-1000)이 끝나면 표지 카드를
-  // 접는다. greeting 이 별도 카드라, 페이드만으로는 빈 카드가 남고 되돌아가면 다시 보인다.
+  // 확장 오버레이가 화면을 다 채우면 표지 퇴장 크로스페이드를 시작한다 —
+  // 뒤의 greeting 이 같은 화면(꽉 찬 배경 + 상단 텍스트)이라 페이드는 보이지
+  // 않고, 제거 순간의 리페인트 깜박임만 가려진다.
   useEffect(() => {
-    if (!isHorizontal || !done) return;
-    const t = setTimeout(() => setCollapsed(true), 1000);
+    if (!done) return;
+    const t = setTimeout(() => setHidden(true), FILL_MS);
     return () => clearTimeout(t);
-  }, [isHorizontal, done]);
+  }, [done]);
+
+  // 크로스페이드가 끝나면 표지를 페인트에서 완전히 제거한다.
+  useEffect(() => {
+    if (!hidden) return;
+    const t = setTimeout(() => setGone(true), SWAP_FADE_MS);
+    return () => clearTimeout(t);
+  }, [hidden]);
+
+  // 가로 모드: 표지가 완전히 사라진 시점에 표지 카드를 접는다. greeting 이 별도
+  // 카드라, 감추기만으로는 빈 카드가 남고 되돌아가면 다시 보인다.
+  useEffect(() => {
+    if (!isHorizontal || !gone) return;
+    setCollapsed(true);
+  }, [isHorizontal, gone]);
 
   // 접힘을 부모 카드(shell 이 렌더한 [data-section] 래퍼)에 적용 → 스냅 대상에서 제거.
   // 표지가 첫 카드였으므로 greeting 이 자연스럽게 첫 카드 자리로 들어온다.
@@ -67,16 +104,83 @@ function CoverSection() {
     if (card) card.style.display = "none";
   }, [collapsed]);
 
+  // 편지지와 확장 오버레이가 공유하는 본문 — greeting 상단 블록과 동일한
+  // 마크업·스타일이라 표지가 사라지는 순간 greeting 텍스트와 그대로 겹친다.
+  const letterBody = (
+    <>
+      <Editable field="greeting" label="인사말" className="w-full">
+        <p style={bodyStyle}>
+          {greeting.intro.map((line, i) => (
+            <span key={i} className="block">
+              {line}
+            </span>
+          ))}
+        </p>
+      </Editable>
+
+      <Editable field="greeting" label="인사말" className="w-full">
+        <p style={bodyStyle}>
+          {greeting.blessing.map((line, i) => (
+            <span key={i} className="block">
+              {line}
+            </span>
+          ))}
+        </p>
+      </Editable>
+
+      <Editable field="names.ko" label="국문 이름">
+        <div className="flex items-center justify-center gap-[12px]">
+          <span className="flex items-center gap-[4px]" style={bodyStyle}>
+            <span>신랑</span>
+            <span>{groom.ko}</span>
+          </span>
+          <img
+            alt=""
+            aria-hidden
+            src={ASSET.introDecoHeart}
+            className="size-[20px] shrink-0"
+          />
+          <span className="flex items-center gap-[4px]" style={bodyStyle}>
+            <span>신부</span>
+            <span>{bride.ko}</span>
+          </span>
+        </div>
+      </Editable>
+
+      <Editable field="greeting" label="인사말" className="w-full">
+        <p
+          style={{
+            fontFamily: FONT.altesse,
+            fontSize: 12,
+            lineHeight: 1.3,
+            color: SUB,
+          }}
+        >
+          {greeting.closingEn.map((line, i) => (
+            <span key={i} className="text-center block whitespace-nowrap">
+              {line}
+            </span>
+          ))}
+        </p>
+      </Editable>
+    </>
+  );
+
   return (
     <section
       ref={sectionRef}
       aria-label="표지"
       onClick={() => setOpened(true)}
-      className="absolute inset-x-0 top-0 z-30 w-full cursor-pointer select-none overflow-hidden transition-opacity duration-1000 ease-in-out"
+      className="absolute inset-x-0 top-0 z-30 w-full cursor-pointer select-none overflow-hidden"
       style={{
         height: "100cqh",
         backgroundColor: COLOR.background,
-        opacity: done ? 0 : 1,
+        // 퇴장: 짧은 크로스페이드(깜박임 방지) 후 display 로 제거한다.
+        // visibility 는 확장 오버레이의 명시적 visible 이 부모 hidden 을
+        // 덮어써 계속 그려지므로 쓰지 않는다.
+        opacity: hidden ? 0 : 1,
+        transition: `opacity ${SWAP_FADE_MS}ms linear`,
+        display: gone ? "none" : undefined,
         pointerEvents: done ? "none" : "auto",
       }}
     >
@@ -199,7 +303,10 @@ function CoverSection() {
           </div>
         </div>
 
-        {/* 편지지 — 봉투와 같은 시점에 아래로 내려감 */}
+        {/* 편지지 — 봉투와 같은 시점에 아래로 내려갔다가 위로 떠올라
+            greeting 섹션과 같은 자리에 멈춘다. 텍스트는 greeting 상단 블록과
+            동일한 마크업·스타일이고, 도착 위치(translate -6px) + top-[94px]
+            = 88px 로 greeting 의 pt-[88px] 텍스트와 정확히 겹친다. */}
         <div
           className={`absolute w-full h-103 top-0 left-1/2 -translate-x-1/2 z-8 ${
             opened ? styles.letterDipRise : "translate-y-[40%]"
@@ -212,57 +319,8 @@ function CoverSection() {
             src={ASSET.introLetter}
             style={{ width: "100%" }}
           />
-          <div className="absolute w-full h-full top-5 left-0 flex flex-col items-center justify-center text-center px-6 gap-4">
-            <Editable
-              as="p"
-              field="greeting"
-              label="인사말"
-              style={{ color: "#99958F", fontSize: "13px" }}
-            >
-              {greeting.intro.map((line, i) => (
-                <span key={i} className="block">
-                  {line}
-                </span>
-              ))}
-            </Editable>
-            <Editable
-              as="p"
-              field="greeting"
-              label="인사말"
-              style={{ color: COLOR.muted, fontSize: "15px" }}
-            >
-              {greeting.blessing.map((line, i) => (
-                <span key={i} className="block">
-                  {line}
-                </span>
-              ))}
-            </Editable>
-
-            <Editable
-              as="p"
-              field="names.ko"
-              label="국문 이름"
-              className="flex items-center justify-center gap-[6px]"
-              style={{
-                fontFamily: FONT.pretendard,
-                fontSize: 14,
-                marginTop: 18,
-                color: COLOR.muted,
-              }}
-            >
-              <span>신랑 {groom.ko}</span>
-              <img src={ASSET.introDecoHeart} alt="" />
-              <span>신부 {bride.ko}</span>
-            </Editable>
-            <Editable
-              as="p"
-              field="greeting"
-              label="인사말"
-              style={{ fontFamily: FONT.altesse, color: "#99958F" }}
-            >
-              We would be delighted to have you join us <br /> in celebrating
-              our love and the beginning of our forever.
-            </Editable>
+          <div className="absolute inset-x-0 top-[94px] flex flex-col items-center gap-5 px-6 text-center">
+            {letterBody}
           </div>
         </div>
 
@@ -276,6 +334,28 @@ function CoverSection() {
           }`}
           style={{ width: "100%" }}
         />
+
+        {/* 확장 편지지 — 도착한 편지지의 종이 영역에서 시작해 봉투·배경 위로
+            화면 전체를 덮는다. 배경(greetingBg)과 본문이 greeting 섹션과 동일해
+            확장이 끝나고 표지가 사라져도 화면이 그대로 이어진다. */}
+        <div
+          className="absolute inset-0 z-11"
+          style={{
+            visibility: done ? "visible" : "hidden",
+            clipPath: done ? BG_CLIP_FULL : BG_CLIP_LETTER,
+            transition: `clip-path ${FILL_MS}ms ease-in-out`,
+          }}
+        >
+          <img
+            alt=""
+            aria-hidden
+            src={ASSET.greetingBg}
+            className="absolute inset-0 size-full object-cover"
+          />
+          <div className="absolute inset-x-0 top-[88px] flex flex-col items-center gap-5 px-6 text-center">
+            {letterBody}
+          </div>
+        </div>
       </div>
 
       {/* 탭 안내 — 열리기 전에만, 클릭은 섹션이 받도록 pointer-events 없음 */}
