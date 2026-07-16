@@ -129,12 +129,14 @@ export function GreetingSection() {
         minHeight: "100cqh",
       }}
     >
-      {/* 크림 페이퍼(레이스 보더) 배경 — 뒤에 깔리는 레이어 */}
+      {/* 크림 페이퍼(레이스 보더) 배경 — 뒤에 깔리는 레이어.
+          object-top: 표지 확장 오버레이(100cqh 고정)와 상단 크롭을 맞춰
+          표지가 제거되는 순간 배경이 튀지 않게 한다. */}
       <img
         alt=""
         aria-hidden
-        src={ASSET.greetingBg}
-        className="absolute inset-0 size-full object-cover"
+        src={isHorizontal ? ASSET.greetingBgHorizontal : ASSET.greetingBg}
+        className="absolute inset-0 size-full object-cover object-top"
       />
 
       {/* 내용 — flex column 으로 위에서 아래로 자연스럽게 흐른다.

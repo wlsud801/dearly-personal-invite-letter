@@ -30,6 +30,8 @@ export const ASSET = {
   // greeting (인삿말)
   /** 인삿말 배경 (꽃/질감) */
   greetingBg: `${BASE}/greeting-bg.png`,
+  /** 인삿말 배경 (꽃/질감) — 가로(카드) 모드용 */
+  greetingBgHorizontal: `${BASE}/greeting-bg-horizontal.png`,
   /** 하트 장식 */
   decoHeart: `${BASE}/deco-heart.svg`,
   /** 구분선 */

@@ -346,11 +346,13 @@ function CoverSection() {
             transition: `clip-path ${FILL_MS}ms ease-in-out`,
           }}
         >
+          {/* object-top: greeting 섹션(콘텐츠 높이)과 오버레이(100cqh)의 높이가
+              달라도 상단 크롭이 같아 표지 제거 순간 배경이 튀지 않는다. */}
           <img
             alt=""
             aria-hidden
-            src={ASSET.greetingBg}
-            className="absolute inset-0 size-full object-cover"
+            src={isHorizontal ? ASSET.greetingBgHorizontal : ASSET.greetingBg}
+            className="absolute inset-0 size-full object-cover object-top"
           />
           <div className="absolute inset-x-0 top-[88px] flex flex-col items-center gap-5 px-6 text-center">
             {letterBody}
