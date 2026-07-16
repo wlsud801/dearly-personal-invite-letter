@@ -48,43 +48,6 @@ export async function submitGuestbookEntry(
   return { success: true }
 }
 
-export async function updateMessage(
-  id: string,
-  password: string,
-  text: string,
-  fromName: string
-): Promise<{ error?: string; success?: boolean }> {
-  const trimmedText = text?.trim()
-  const trimmedName = fromName?.trim()
-  const trimmedPassword = password?.trim()
-
-  if (!id) return { error: '메세지를 찾을 수 없습니다.' }
-  if (!trimmedText || !trimmedName) return { error: '이름과 메세지를 모두 입력해주세요.' }
-  if (trimmedText.length > 200) return { error: '메세지는 200자 이내로 입력해주세요.' }
-  if (!trimmedPassword || !/^\d{4}$/.test(trimmedPassword))
-    return { error: '비밀번호는 숫자 4자리입니다.' }
-
-  const supabase = createSupabaseClient()
-  // 작성 시 설정한 비밀번호가 일치하는 경우에만 수정 — 본인 글만 수정 가능
-  const { data, error: fetchError } = await supabase
-    .from(MESSAGES_TABLE)
-    .select('password')
-    .eq('id', id)
-    .single()
-
-  if (fetchError || !data) return { error: '메세지를 찾을 수 없습니다.' }
-  if (data.password !== trimmedPassword) return { error: '비밀번호가 일치하지 않습니다.' }
-
-  const { error } = await supabase
-    .from(MESSAGES_TABLE)
-    .update({ text: trimmedText, from_name: trimmedName })
-    .eq('id', id)
-  if (error) return { error: '수정에 실패했습니다.' }
-
-  revalidatePath(PAGE_PATH)
-  return { success: true }
-}
-
 export async function deleteMessage(
   id: string,
   password: string

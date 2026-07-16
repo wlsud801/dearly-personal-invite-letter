@@ -6,9 +6,6 @@
 /*  guestbook-section 의 "메세지 남기기" 클릭 시 열린다. 다른 모달과 달리 라이트     */
 /*  크림(#EAE3DE) 배경. "Message" + 안내문 + 성함/비밀번호/메세지 입력 + 작성       */
 /*  취소(라인)/작성 완료(채움) 버튼. body 로 portal, 스크롤 잠금, ESC/꺽쇠 닫기.    */
-/*                                                                             */
-/*  editing prop 을 주면 "수정 모드" — 기존 성함/메세지가 채워진 채 열리고,        */
-/*  작성 시 설정한 비밀번호를 입력해야 저장된다(본인 글만 수정 가능).              */
 /* -------------------------------------------------------------------------- */
 
 import { useEffect, useState, useTransition } from "react";
@@ -16,7 +13,7 @@ import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { ChevronLeft } from "lucide-react";
 import RoughButton from "@/templates/season1/components/rough-button";
-import { submitGuestbookEntry, updateMessage } from "@/app/jinyoung-jihoon/actions";
+import { submitGuestbookEntry } from "@/app/jinyoung-jihoon/actions";
 import { FONT } from "../theme";
 
 /** Figma 색 — 라이트 크림 폼 */
@@ -46,15 +43,9 @@ const labelStyle = {
 type GuestbookWriteModalProps = {
   open: boolean;
   onClose: () => void;
-  /** 수정 모드 — 수정할 메시지. 없으면 새 메시지 작성 모드. */
-  editing?: { id: string; text: string; from: string } | null;
 };
 
-export function GuestbookWriteModal({
-  open,
-  onClose,
-  editing = null,
-}: GuestbookWriteModalProps) {
+export function GuestbookWriteModal({ open, onClose }: GuestbookWriteModalProps) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -62,17 +53,14 @@ export function GuestbookWriteModal({
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 
-  // 열릴 때마다 폼 초기화 — 수정 모드는 기존 성함/메세지를 채워서 시작한다.
-  // (비밀번호는 본인 확인용이라 항상 비워둔다)
+  // 열릴 때마다 폼 초기화
   useEffect(() => {
     if (!open) return;
-    setName(editing?.from ?? "");
-    setMessage(editing?.text ?? "");
+    setName("");
+    setMessage("");
     setPassword("");
     setError(null);
-    // editing 객체는 부모 렌더마다 재생성될 수 있어 id 로만 비교한다.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, editing?.id]);
+  }, [open]);
 
   // 열려 있는 동안 body 스크롤 잠금 + ESC 로 닫기
   useEffect(() => {
@@ -94,17 +82,11 @@ export function GuestbookWriteModal({
   function handleSubmit() {
     if (pending) return;
     startTransition(async () => {
-      let result: { error?: string; success?: boolean } | null;
-      if (editing) {
-        // 수정 — 작성 시 설정한 비밀번호가 일치해야 서버가 반영한다.
-        result = await updateMessage(editing.id, password, message, name);
-      } else {
-        const formData = new FormData();
-        formData.set("text", message);
-        formData.set("from_name", name);
-        formData.set("password", password);
-        result = await submitGuestbookEntry(null, formData);
-      }
+      const formData = new FormData();
+      formData.set("text", message);
+      formData.set("from_name", name);
+      formData.set("password", password);
+      const result = await submitGuestbookEntry(null, formData);
       if (result?.error) {
         setError(result.error);
         return;
@@ -179,11 +161,7 @@ export function GuestbookWriteModal({
                 maxLength={4}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder={
-                  editing
-                    ? "작성 시 설정한 비밀번호"
-                    : "숫자 4자리를 입력해주세요."
-                }
+                placeholder="숫자 4자리를 입력해주세요."
                 className="w-full rounded-lg border-2 bg-transparent px-3 py-2 outline-none placeholder:opacity-80"
                 style={{ ...fieldStyle, borderColor: LABEL }}
               />
@@ -217,22 +195,14 @@ export function GuestbookWriteModal({
         {/* 액션 — RoughButton (arrow 없음) */}
         <div className="flex w-full gap-3">
           <RoughButton
-            label={editing ? "수정 취소" : "작성 취소"}
+            label="작성 취소"
             variant="line"
             colorType="green"
             onClick={onClose}
             className="min-w-0 flex-1"
           />
           <RoughButton
-            label={
-              pending
-                ? editing
-                  ? "수정 중..."
-                  : "등록 중..."
-                : editing
-                  ? "수정 완료"
-                  : "작성 완료"
-            }
+            label={pending ? "등록 중..." : "작성 완료"}
             variant="filled"
             colorType="green"
             onClick={handleSubmit}

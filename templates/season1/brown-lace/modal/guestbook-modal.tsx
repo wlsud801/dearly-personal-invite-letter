@@ -5,7 +5,7 @@
 /*                                                                             */
 /*  guestbook-section 의 "메세지 전체보기" 클릭 시 열린다. 다크 브라운 풀스크린에   */
 /*  "Message" 타이틀 + 좌측 닫기(꺽쇠) + 전체 방명록 메시지 스크롤 리스트.          */
-/*  각 메시지는 상/하단 플러시(guest-deco)로 감싸고, 본문 + From.이름, 우측 삭제(X)  */
+/*  각 메시지는 상/하단 플러시(guest-deco)로 감싸고, 본문 + From.이름, 우측 삭제(X)   */
 /*  affordance, 카드 사이 하트(deco-heart). body 로 portal, 스크롤 잠금, ESC 닫기. */
 /* -------------------------------------------------------------------------- */
 
@@ -13,12 +13,11 @@ import { useInvitationData } from "@/templates/shared";
 import { Fragment, useEffect, useState, useTransition } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Pencil, X } from "lucide-react";
+import { ChevronLeft, X } from "lucide-react";
 import { deleteMessage } from "@/app/jinyoung-jihoon/actions";
 import { ASSET } from "../assets";
 import { COLOR, FONT } from "../theme";
 import { GuestbookDeleteDialog } from "./guestbook-delete-dialog";
-import { GuestbookWriteModal } from "./guestbook-write-modal";
 
 type GuestbookModalProps = { open: boolean; onClose: () => void };
 
@@ -37,23 +36,16 @@ export function GuestbookModal({ open, onClose }: GuestbookModalProps) {
   // 삭제 확인 다이얼로그 대상 메시지 인덱스 (null = 닫힘)
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
-  // 수정 모달 대상 메시지 인덱스 (null = 닫힘)
-  const [editIndex, setEditIndex] = useState<number | null>(null);
   const [, startTransition] = useTransition();
   const router = useRouter();
 
-  // 열려 있는 동안 body 스크롤 잠금 + ESC (수정/삭제 다이얼로그 먼저, 없으면 모달) 닫기
+  // 열려 있는 동안 body 스크롤 잠금 + ESC (삭제 다이얼로그 먼저, 없으면 모달) 닫기
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const onKey = (e: KeyboardEvent) => {
       if (e.key !== "Escape") return;
-      // 수정 모달이 열려 있으면 그것만 닫는다 (수정 모달 자체 ESC 와 중복돼도 무해)
-      if (editIndex !== null) {
-        setEditIndex(null);
-        return;
-      }
       if (deleteIndex !== null) {
         setDeleteIndex(null);
         return;
@@ -65,7 +57,7 @@ export function GuestbookModal({ open, onClose }: GuestbookModalProps) {
       document.body.style.overflow = prev;
       window.removeEventListener("keydown", onKey);
     };
-  }, [open, onClose, editIndex, deleteIndex]);
+  }, [open, onClose, deleteIndex]);
 
   if (!open || typeof document === "undefined") return null;
 
@@ -153,18 +145,9 @@ export function GuestbookModal({ open, onClose }: GuestbookModalProps) {
                     src={ASSET.guestDecoSm}
                     className="w-full -scale-y-100"
                   />
-                  {/* 수정/삭제 — 본인 작성 글에만 노출 (비밀번호로 본인 확인) */}
+                  {/* 삭제 — 본인 작성 글에만 노출 (비밀번호로 본인 확인) */}
                   {msg.mine && (
                     <div className="absolute right-0 top-1/2 flex -translate-y-1/2 flex-col items-center">
-                      <button
-                        type="button"
-                        onClick={() => setEditIndex(i)}
-                        aria-label="메시지 수정"
-                        className="flex size-6 items-center justify-center opacity-60"
-                        style={{ color: COLOR.text }}
-                      >
-                        <Pencil className="size-3" />
-                      </button>
                       <button
                         type="button"
                         onClick={() => setDeleteIndex(i)}
@@ -194,20 +177,6 @@ export function GuestbookModal({ open, onClose }: GuestbookModalProps) {
         error={deleteError}
       />
 
-      {/* 수정 모달 — 작성 모달을 수정 모드로 재사용 (비밀번호 일치 시에만 반영) */}
-      <GuestbookWriteModal
-        open={editIndex !== null}
-        onClose={() => setEditIndex(null)}
-        editing={
-          editIndex !== null && messages[editIndex]?.id
-            ? {
-                id: messages[editIndex].id,
-                text: messages[editIndex].text,
-                from: messages[editIndex].from,
-              }
-            : null
-        }
-      />
     </div>,
     document.body,
   );
