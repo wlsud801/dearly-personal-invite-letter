@@ -3,7 +3,7 @@ import {
   useCoverScrollLock,
   useInvitationData,
 } from "@/templates/shared";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ASSET } from "../assets";
 import styles from "../cover.module.css";
 import { useIntro } from "../intro-context";
@@ -26,9 +26,11 @@ const BG_CLIP_LETTER = "inset(8px 13px calc(100% - 430px) 13px round 14px)";
 const BG_CLIP_FULL = "inset(0px 0px 0px 0px round 0px)";
 
 /**
- * 표지 퇴장 크로스페이드(ms). 확장 완료 화면과 greeting 이 동일해 페이드 자체는
- * 보이지 않지만, display 제거를 한 프레임에 하면 뒤 섹션을 새로 페인트하면서
- * 깜박일 수 있어 아주 짧게 겹쳐서 사라지게 한다.
+ * 표지 퇴장 크로스페이드(ms) — 세로 모드 전용. 세로 모드에서는 바로 뒤에 동일한
+ * greeting 이 그려져 있어 페이드 자체는 보이지 않고, display 제거 순간의 리페인트
+ * 깜박임만 가려진다. 가로(카드) 모드에서는 greeting 이 옆 카드라 표지 뒤가 셸의
+ * 어두운 배경뿐이므로 페이드를 쓰면 화면이 어둡게 깜박인다 — 페이드 없이 카드를
+ * 즉시 접어(collapsed) greeting 카드가 같은 프레임에 그 자리를 대신하게 한다.
  */
 const SWAP_FADE_MS = 250;
 
@@ -40,11 +42,11 @@ function CoverSection() {
   const [opened, setOpened] = useState(false);
   // 열림 모션이 끝나 편지지가 도착했는지. 이때부터 확장 오버레이가 화면을 채운다.
   const [done, setDone] = useState(false);
-  // 확장(FILL_MS)까지 끝나 표지 퇴장 크로스페이드를 시작했는지.
+  // 세로 모드: 확장(FILL_MS)까지 끝나 표지 퇴장 크로스페이드를 시작했는지.
   const [hidden, setHidden] = useState(false);
-  // 크로스페이드(SWAP_FADE_MS)까지 끝나 표지를 페인트에서 제거했는지.
+  // 세로 모드: 크로스페이드(SWAP_FADE_MS)까지 끝나 표지를 페인트에서 제거했는지.
   const [gone, setGone] = useState(false);
-  // 가로 모드: 확장이 끝난 뒤 표지 카드를 완전히 접었는지.
+  // 가로 모드: 확장이 끝난 뒤 표지 카드를 완전히 접었는지(페이드 없이 즉시).
   const [collapsed, setCollapsed] = useState(false);
   const { markCoverDone, isHorizontal } = useIntro();
 
@@ -73,32 +75,34 @@ function CoverSection() {
     return () => clearTimeout(t);
   }, [opened, markCoverDone]);
 
-  // 확장 오버레이가 화면을 다 채우면 표지 퇴장 크로스페이드를 시작한다 —
-  // 뒤의 greeting 이 같은 화면(꽉 찬 배경 + 상단 텍스트)이라 페이드는 보이지
-  // 않고, 제거 순간의 리페인트 깜박임만 가려진다.
+  // 확장 오버레이가 화면을 다 채우면 표지를 치운다.
+  //  - 세로: 뒤에 동일한 greeting 이 그려져 있어 짧은 크로스페이드로
+  //    제거 순간의 리페인트 깜박임만 가린다.
+  //  - 가로: greeting 이 옆 카드라 표지 뒤에는 셸의 어두운 배경뿐이다.
+  //    페이드를 거치면 어두운 화면이 새어 보여 깜박이므로, 페이드 없이
+  //    곧바로 카드를 접는다 — greeting 카드가 같은 프레임에 첫 카드 자리로
+  //    들어오고, 확장 완료 화면과 greeting 초기 화면이 동일해 이음새가 없다.
   useEffect(() => {
     if (!done) return;
-    const t = setTimeout(() => setHidden(true), FILL_MS);
+    const t = setTimeout(
+      () => (isHorizontal ? setCollapsed(true) : setHidden(true)),
+      FILL_MS,
+    );
     return () => clearTimeout(t);
-  }, [done]);
+  }, [done, isHorizontal]);
 
-  // 크로스페이드가 끝나면 표지를 페인트에서 완전히 제거한다.
+  // 세로 모드: 크로스페이드가 끝나면 표지를 페인트에서 완전히 제거한다.
   useEffect(() => {
     if (!hidden) return;
     const t = setTimeout(() => setGone(true), SWAP_FADE_MS);
     return () => clearTimeout(t);
   }, [hidden]);
 
-  // 가로 모드: 표지가 완전히 사라진 시점에 표지 카드를 접는다. greeting 이 별도
-  // 카드라, 감추기만으로는 빈 카드가 남고 되돌아가면 다시 보인다.
-  useEffect(() => {
-    if (!isHorizontal || !gone) return;
-    setCollapsed(true);
-  }, [isHorizontal, gone]);
-
   // 접힘을 부모 카드(shell 이 렌더한 [data-section] 래퍼)에 적용 → 스냅 대상에서 제거.
   // 표지가 첫 카드였으므로 greeting 이 자연스럽게 첫 카드 자리로 들어온다.
-  useEffect(() => {
+  // useLayoutEffect: 페인트 전에 동기로 감춰 표지 제거와 greeting 등장이
+  // 항상 같은 프레임에 일어난다(중간 빈 카드 프레임 방지).
+  useLayoutEffect(() => {
     if (!collapsed) return;
     const card = sectionRef.current?.closest<HTMLElement>("[data-section]");
     if (card) card.style.display = "none";
@@ -175,7 +179,8 @@ function CoverSection() {
       style={{
         height: "100cqh",
         backgroundColor: COLOR.background,
-        // 퇴장: 짧은 크로스페이드(깜박임 방지) 후 display 로 제거한다.
+        // 퇴장(세로 모드): 짧은 크로스페이드(깜박임 방지) 후 display 로 제거한다.
+        // 가로 모드는 hidden/gone 을 쓰지 않고 부모 카드 접기로만 사라진다.
         // visibility 는 확장 오버레이의 명시적 visible 이 부모 hidden 을
         // 덮어써 계속 그려지므로 쓰지 않는다.
         opacity: hidden ? 0 : 1,
