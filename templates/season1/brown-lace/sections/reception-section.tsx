@@ -21,8 +21,8 @@ import {
   pad2,
   useInvitationData,
 } from "@/templates/shared";
-import type { ReactNode } from "react";
 import { Copy, Phone } from "lucide-react";
+import type { ReactNode } from "react";
 import { ASSET } from "../assets";
 import { CardReveal } from "../card-reveal";
 import { COLOR, FONT } from "../theme";
@@ -59,7 +59,7 @@ function LaceCard({ children }: { children: ReactNode }) {
       />
       {/* top/bottom 이미지와 1px 겹쳐 연결부의 배경색 노출(선)을 막는다 */}
       <div
-        className="-my-px bg-top bg-repeat-y px-[17%]"
+        className="-my-px bg-top bg-repeat-y px-[15%]"
         style={{
           backgroundImage: `url(${ASSET.receptionLaceBlock})`,
           backgroundSize: "100% auto",
@@ -201,6 +201,30 @@ export function ReceptionSection() {
               </Editable>
             )}
 
+            {/* ===== 예식 및 주차 안내 (고정 안내문) ===== */}
+            <div className="flex w-full flex-col items-center gap-3">
+              <p style={titleStyle}>예식 및 주차 안내</p>
+              <div className="flex w-full flex-col items-center gap-3">
+                <p style={bodyStyle}>
+                  예식은 <b>2층 단독홀</b>, <br />
+                  식사는 <b>4층 연회장</b>에서 진행되며
+                  <br />
+                  <b>예식 30분 전부터</b> 이용하실 수 있습니다.
+                </p>
+                <p style={bodyStyle}>
+                  주차 공간이 협소하여 <br />
+                  <b>대중교통 이용을 권장드립니다.</b>
+                  <br />
+                  만차 시에는 <b>외부 주차장으로 안내</b>해 드립니다.
+                </p>
+                <p style={bodyStyle}>
+                  와인과 주류가 준비되어 있으니
+                  <br />
+                  부담 없이 오셔서 함께 즐겨주시기 바랍니다.
+                </p>
+              </div>
+            </div>
+
             {/* ===== 화환 ===== */}
             {hasFlower && (
               <Editable
@@ -222,13 +246,6 @@ export function ReceptionSection() {
                     <Lines lines={flower.body} />
                   </p>
                 )}
-                {/* 하단 플로럴 데코 — 상단 데코의 상하 반전 대칭 */}
-                <img
-                  alt=""
-                  aria-hidden
-                  src={ASSET.receptionDeco}
-                  className="w-40 max-w-full -scale-y-100"
-                />
               </Editable>
             )}
           </div>

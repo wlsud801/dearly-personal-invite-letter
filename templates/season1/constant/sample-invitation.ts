@@ -57,17 +57,9 @@ export const SAMPLE_INVITATION: InvitationData = {
   flower: {
     title: "화환 안내",
     body: [
-      "",
-      "",
-      "",
-      "",
       "예식홀 내부 규정에 의하여",
       "화환 반입이 제한되오니,",
       "소중한 마음만 감사히 받겠습니다.",
-      "",
-      "",
-      "",
-      "",
     ],
   },
 
