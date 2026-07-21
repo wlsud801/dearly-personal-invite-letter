@@ -25,10 +25,26 @@ const NUDGE_MS = 1600;
 /** 카드가 왼쪽으로 밀리는 넛지 모션. 오버슈트(+방향)는 첫 카드 왼쪽에 배경이
     드러나므로 모든 값을 0 이하로 유지하고, 잔여 바운스로 탄성을 표현한다. */
 const NUDGE_KEYFRAMES: Keyframe[] = [
-  { transform: "translateX(0)", offset: 0, easing: "cubic-bezier(0.4, 0, 0.2, 1)" },
-  { transform: "translateX(-22px)", offset: 0.26, easing: "cubic-bezier(0.34, 1.2, 0.64, 1)" },
-  { transform: "translateX(0)", offset: 0.61, easing: "cubic-bezier(0.4, 0, 0.2, 1)" },
-  { transform: "translateX(-7px)", offset: 0.81, easing: "cubic-bezier(0.34, 1.2, 0.64, 1)" },
+  {
+    transform: "translateX(0)",
+    offset: 0,
+    easing: "cubic-bezier(0.4, 0, 0.2, 1)",
+  },
+  {
+    transform: "translateX(-22px)",
+    offset: 0.26,
+    easing: "cubic-bezier(0.34, 1.2, 0.64, 1)",
+  },
+  {
+    transform: "translateX(0)",
+    offset: 0.61,
+    easing: "cubic-bezier(0.4, 0, 0.2, 1)",
+  },
+  {
+    transform: "translateX(-7px)",
+    offset: 0.81,
+    easing: "cubic-bezier(0.34, 1.2, 0.64, 1)",
+  },
   { transform: "translateX(0)", offset: 1 },
 ];
 
@@ -104,7 +120,7 @@ export function SwipeNudge() {
             backdropFilter: "blur(12px)",
             boxShadow: "4px 4px 12px 0px rgba(124, 109, 95, 0.12)",
             fontFamily: "var(--font-nanum-myeongjo), serif",
-            fontWeight: 700,
+            fontWeight: 500,
             fontSize: 16,
             lineHeight: 1.4,
             letterSpacing: "-0.04em",

@@ -379,7 +379,7 @@ function CoverSection() {
               backdropFilter: "blur(12px)",
               boxShadow: "4px 4px 12px 0px rgba(124, 109, 95, 0.12)",
               fontFamily: "var(--font-nanum-myeongjo), serif",
-              fontWeight: 700,
+              fontWeight: 500,
               fontSize: 16,
               lineHeight: 1.4,
               letterSpacing: "-0.04em",
