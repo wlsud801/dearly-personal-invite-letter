@@ -16,6 +16,7 @@ import RoughButton from "@/templates/season1/components/rough-button";
 import {
   Editable,
   KakaoMap,
+  Reveal,
   copyWithToast,
   openMap,
   useInvitationData,
@@ -83,7 +84,7 @@ export function VenueSection() {
   return (
     <section
       aria-label="장소 정보"
-      className="relative w-full select-none px-5 py-5"
+      className="relative w-full select-none px-5 pt-5 pb-10"
       style={{ backgroundColor: COLOR.background }}
     >
       {/* 가로 모드: 카드 진입 시 콘텐츠가 아래→위로 페이드인 */}
@@ -128,7 +129,9 @@ export function VenueSection() {
             </p>
             <button
               type="button"
-              onClick={() => void copyWithToast(venue.address, "주소가 복사되었습니다.")}
+              onClick={() =>
+                void copyWithToast(venue.address, "주소가 복사되었습니다.")
+              }
               aria-label="주소 복사"
               className="flex size-6 items-center justify-center"
               style={{ color: COLOR.text }}
@@ -167,7 +170,15 @@ export function VenueSection() {
             className="flex w-full flex-col gap-5 p-3"
           >
             {venue.transport.map((group, i) => (
-              <div key={group.title} className="flex w-full flex-col">
+              // 스크롤 진입 시 자차·지하철 등 교통편 그룹이 아래→위로 순차 등장.
+              // delay 를 그룹 순서만큼 주어 한 화면에 여러 그룹이 보여도 하나씩 나타난다.
+              <Reveal
+                key={group.title}
+                from="up"
+                amount={0.3}
+                delay={i * 0.15}
+                className="flex w-full flex-col"
+              >
                 <div className="flex w-full flex-col gap-3">
                   <p style={nameStyle}>{group.title}</p>
                   {group.items.map((item, j) => (
@@ -189,7 +200,7 @@ export function VenueSection() {
                     style={{ backgroundColor: COLOR.text, opacity: 0.2 }}
                   />
                 )}
-              </div>
+              </Reveal>
             ))}
           </Editable>
         )}
