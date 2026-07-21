@@ -225,7 +225,7 @@ export function GreetingSection() {
           <img
             alt=""
             aria-hidden
-            src={ASSET.divide}
+            src={ASSET.greetingDeco}
             className="w-full max-w-[242px]"
           />
 

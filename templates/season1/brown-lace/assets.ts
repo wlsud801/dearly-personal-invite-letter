@@ -34,7 +34,9 @@ export const ASSET = {
   greetingBgHorizontal: `${BASE}/greeting-bg-horizontal.png`,
   /** 하트 장식 */
   decoHeart: `${BASE}/deco-heart.svg`,
-  /** 구분선 */
+  /** 구분선 (플로럴 디바이더) */
+  greetingDeco: `${BASE}/greeting-deco.svg`,
+  /** 구분선 (구버전) */
   divide: `${BASE}/divide.svg`,
   /** 카카오 공유 버튼 */
   greetingKakaoBtn: `${BASE}/greeting-kakao-btn.svg`,
