@@ -275,7 +275,6 @@ function CoverSection() {
               {bigDate}
             </Editable>
             <img src={ASSET.introDeco} alt="" className="rotate-180 mb-3" />
-
             {/* date and venue */}
             <div className="text-center mt-4">
               <Editable
@@ -349,6 +348,12 @@ function CoverSection() {
             visibility: done ? "visible" : "hidden",
             clipPath: done ? BG_CLIP_FULL : BG_CLIP_LETTER,
             transition: `clip-path ${FILL_MS}ms ease-in-out`,
+            // clip-path 확장을 컴포지터 레이어에서 돌려 매 프레임 리페인트로 인한
+            // 프레임 드랍(뚝뚝 끊김)을 없앤다. 편지지 도착(3s) 전인 opened 시점에
+            // 미리 레이어를 승격해 애니메이션 첫 프레임의 레이어화 히치도 막는다.
+            willChange: opened ? "clip-path" : undefined,
+            transform: "translateZ(0)",
+            backfaceVisibility: "hidden",
           }}
         >
           {/* object-top: greeting 섹션(콘텐츠 높이)과 오버레이(100cqh)의 높이가
