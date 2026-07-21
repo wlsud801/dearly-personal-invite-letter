@@ -8,7 +8,7 @@ import { ASSET } from "../assets";
 import styles from "../cover.module.css";
 import { useIntro } from "../intro-context";
 import { COLOR, EFFECT, FONT } from "../theme";
-import { FILL_MS, SUB, bodyStyle } from "./greeting-section";
+import { FILL_MS, SUB, SWAP_FADE_MS, bodyStyle } from "./greeting-section";
 
 /**
  * 편지지 도착 시점(ms) = letterDipRise delay 1000 + duration 2000.
@@ -25,14 +25,14 @@ const OPEN_ANIM_MS = 3000;
 const BG_CLIP_LETTER = "inset(8px 13px calc(100% - 430px) 13px round 14px)";
 const BG_CLIP_FULL = "inset(0px 0px 0px 0px round 0px)";
 
-/**
- * 표지 퇴장 크로스페이드(ms) — 세로 모드 전용. 세로 모드에서는 바로 뒤에 동일한
- * greeting 이 그려져 있어 페이드 자체는 보이지 않고, display 제거 순간의 리페인트
- * 깜박임만 가려진다. 가로(카드) 모드에서는 greeting 이 옆 카드라 표지 뒤가 셸의
- * 어두운 배경뿐이므로 페이드를 쓰면 화면이 어둡게 깜박인다 — 페이드 없이 카드를
- * 즉시 접어(collapsed) greeting 카드가 같은 프레임에 그 자리를 대신하게 한다.
+/*
+ * 표지 퇴장 크로스페이드(SWAP_FADE_MS)는 greeting-section 과 공유한다.
+ * 세로 모드에서는 바로 뒤에 동일한 greeting 이 그려져 있어 페이드 자체는 보이지
+ * 않고, display 제거 순간의 리페인트 깜박임만 가려진다. 가로(카드) 모드에서는
+ * greeting 이 옆 카드라 표지 뒤가 셸의 어두운 배경뿐이므로 페이드를 쓰면 화면이
+ * 어둡게 깜박인다 — 페이드 없이 카드를 즉시 접어(collapsed) greeting 카드가 같은
+ * 프레임에 그 자리를 대신하게 한다.
  */
-const SWAP_FADE_MS = 250;
 
 function CoverSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -223,7 +223,7 @@ function CoverSection() {
             style={{
               fontFamily: FONT.filmotype,
               fontSize: "68px",
-              color: COLOR.text,
+              color: "#DFD2C6",
               filter: EFFECT.innerShadow,
             }}
           >
@@ -365,21 +365,28 @@ function CoverSection() {
         </div>
       </div>
 
-      {/* 탭 안내 — 열리기 전에만, 클릭은 섹션이 받도록 pointer-events 없음 */}
+      {/* 탭 안내 토스트(Figma 519:3592) — 열리기 전에만, 클릭은 섹션이 받도록
+          pointer-events 없음. top 42.9% = 375/874 (디자인 프레임 기준) */}
       {!opened && (
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-[30%] z-20 flex justify-center"
+          className="pointer-events-none absolute inset-x-0 top-[42.9%] z-20 flex justify-center"
         >
           <span
-            className="animate-pulse tracking-[0.3em]"
+            className={`${styles.toastBlink} rounded-[8px] px-4 py-2`}
             style={{
-              fontFamily: FONT.pretendard,
-              fontSize: 12,
-              color: COLOR.muted,
+              backgroundColor: "rgba(255, 255, 255, 0.2)",
+              backdropFilter: "blur(12px)",
+              boxShadow: "4px 4px 12px 0px rgba(124, 109, 95, 0.12)",
+              fontFamily: "var(--font-nanum-myeongjo), serif",
+              fontWeight: 700,
+              fontSize: 16,
+              lineHeight: 1.4,
+              letterSpacing: "-0.04em",
+              color: "rgba(124, 109, 95, 0.8)",
             }}
           >
-            클릭해주세요
+            화면을 눌러 봉투를 열어주세요
           </span>
         </div>
       )}

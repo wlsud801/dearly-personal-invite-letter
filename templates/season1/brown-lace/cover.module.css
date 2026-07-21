@@ -21,3 +21,26 @@
     translate: -50% -6px;
   }
 }
+
+/* 탭 안내 토스트 — 2.1s 주기로 3번 깜박인 뒤(0~90%) 페이드아웃되어
+   사라진다(90~100% → opacity 0 유지). 총 7s. */
+.toastBlink {
+  animation: toastBlink 7s ease-in-out forwards;
+}
+
+@keyframes toastBlink {
+  0%,
+  30%,
+  60%,
+  90% {
+    opacity: 1;
+  }
+  15%,
+  45%,
+  75% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+  }
+}

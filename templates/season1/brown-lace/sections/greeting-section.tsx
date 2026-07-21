@@ -39,6 +39,13 @@ export const SUB = "#99958f";
  */
 export const FILL_MS = 1200;
 
+/**
+ * 표지 퇴장 크로스페이드(ms) — cover 와 공유. 하단 콘텐츠 상승은 표지가
+ * 완전히 제거된 뒤(FILL_MS + SWAP_FADE_MS) 시작해, 표지가 사라지는 동안
+ * 화면이 완전히 정지된 상태를 유지한다(겹치면 깜박여 보인다).
+ */
+export const SWAP_FADE_MS = 250;
+
 /** 본문(한글) 공통 스타일 — Pretendard Medium 16 / brown #7C6D5F. 표지 편지지와 공유. */
 export const bodyStyle = {
   fontFamily: FONT.pretendard,
@@ -99,12 +106,14 @@ function ParentRow({ person }: { person: Person }) {
 export function GreetingSection() {
   const { groom, bride, greeting } = useInvitationData();
   const { coverDone, isHorizontal } = useIntro();
-  // coverDone → 표지 확장 오버레이(FILL_MS) → filled(하단 콘텐츠 상승) 순서.
+  // coverDone → 표지 확장 오버레이(FILL_MS) → 표지 크로스페이드 제거
+  // (SWAP_FADE_MS) → filled(하단 콘텐츠 상승) 순서. 표지가 화면에서 완전히
+  // 사라진 뒤에 올라와야 전환 중 깜박임 없이 하단 정보만 자연스럽게 나타난다.
   // Provider 밖(단독 렌더)에서는 coverDone 이 처음부터 true 라 즉시 최종 상태다.
   const [filled, setFilled] = useState(coverDone);
   useEffect(() => {
     if (!coverDone || filled) return;
-    const t = setTimeout(() => setFilled(true), FILL_MS);
+    const t = setTimeout(() => setFilled(true), FILL_MS + SWAP_FADE_MS + 100);
     return () => clearTimeout(t);
   }, [coverDone, filled]);
   // "축하 연락하기" / "참석 여부 전달" 모달 열림 여부
