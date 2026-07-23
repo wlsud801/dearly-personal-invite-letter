@@ -26,6 +26,11 @@ import { COLOR, FONT } from "../theme";
 
 const INK = COLOR.muted; // #7C6D5F — 크림 편지지 위 텍스트
 
+// 공유/복사에 사용할 청첩장 주소 — 배포 도메인으로 고정(하드코딩).
+// window.location 을 쓰면 로컬 개발 시 localhost 가 나가므로 여기서 못 박는다.
+const INVITATION_URL =
+  "https://dearly-personal-invite-letter-wlsud801s-projects.vercel.app/jinyoung-jihoon";
+
 export function ShareSection() {
   const { share, groom, bride, schedule } = useInvitationData();
   const { isHorizontal } = useIntro();
@@ -33,6 +38,7 @@ export function ShareSection() {
   // 카카오톡 공유 — 성공(kakao/native)은 별도 피드백 없음, 폴백 결과만 토스트
   const handleKakaoShare = () =>
     void shareKakao({
+      url: INVITATION_URL,
       title: `${groom.ko} ♥ ${bride.ko} 결혼합니다`,
       description: schedule.dateKo,
       // 피드 썸네일 — 봉투 썸네일 이미지.
@@ -136,7 +142,7 @@ export function ShareSection() {
             arrow
             icon={<Copy className="size-[13px]" />}
             onClick={() =>
-              void copyLink().then((ok) =>
+              void copyLink(INVITATION_URL).then((ok) =>
                 showToast(
                   ok ? "청첩장 주소가 복사되었습니다." : "복사에 실패했습니다.",
                 ),
