@@ -11,6 +11,7 @@
 
 import {
   Editable,
+  absoluteUrl,
   copyLink,
   shareKakao,
   showToast,
@@ -26,7 +27,7 @@ import { COLOR, FONT } from "../theme";
 const INK = COLOR.muted; // #7C6D5F — 크림 편지지 위 텍스트
 
 export function ShareSection() {
-  const { share, groom, bride, schedule, gallery } = useInvitationData();
+  const { share, groom, bride, schedule } = useInvitationData();
   const { isHorizontal } = useIntro();
 
   // 카카오톡 공유 — 성공(kakao/native)은 별도 피드백 없음, 폴백 결과만 토스트
@@ -34,10 +35,9 @@ export function ShareSection() {
     void shareKakao({
       title: `${groom.ko} ♥ ${bride.ko} 결혼합니다`,
       description: schedule.dateKo,
-      // 피드 썸네일 — 카카오 서버가 접근할 절대 URL 이어야 한다
-      imageUrl: gallery.photos[0]
-        ? new URL(gallery.photos[0], window.location.href).href
-        : undefined,
+      // 피드 썸네일 — 봉투 썸네일 이미지.
+      // 카카오 서버가 접근할 절대 URL(프로덕션 도메인 기준)이어야 한다.
+      imageUrl: absoluteUrl("/assets/templates/brown-lace/thumbnail.jpg"),
     }).then((result) => {
       if (result === "copied") showToast("청첩장 주소가 복사되었습니다.");
       else if (result === "failed") showToast("공유에 실패했습니다.");

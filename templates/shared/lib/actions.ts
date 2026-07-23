@@ -3,6 +3,27 @@
 /*  (browser APIs are only touched inside the functions, so SSR import is safe) */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * 공유·복사에 쓸 사이트 기준 도메인. 로컬(localhost)에서도 프로덕션 주소로
+ * 링크가 나가도록, 현재 origin 이 아닌 배포 도메인을 기준으로 삼는다.
+ * (app/layout.tsx 의 metadataBase 와 동일한 폴백)
+ */
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  "https://dearly-personal-invite-letter-wlsud801s-projects.vercel.app";
+
+/** 현재 페이지 경로를 프로덕션 도메인에 붙인 절대 URL (SSR 시엔 도메인만). */
+export function shareUrl(): string {
+  if (typeof window === "undefined") return SITE_URL;
+  const { pathname, search } = window.location;
+  return new URL(pathname + search, SITE_URL).href;
+}
+
+/** 상대 경로를 프로덕션 도메인 기준 절대 URL 로 바꾼다 (예: 카카오 썸네일). */
+export function absoluteUrl(path: string): string {
+  return new URL(path, SITE_URL).href;
+}
+
 /** Copies text to the clipboard. Resolves `true` on success. */
 export async function copyToClipboard(text: string): Promise<boolean> {
   try {
@@ -13,11 +34,9 @@ export async function copyToClipboard(text: string): Promise<boolean> {
   }
 }
 
-/** Copies the current page URL (or a given one) to the clipboard. */
+/** Copies the invitation URL (or a given one) to the clipboard. */
 export function copyLink(url?: string): Promise<boolean> {
-  const link =
-    url ?? (typeof window !== "undefined" ? window.location.href : "");
-  return copyToClipboard(link);
+  return copyToClipboard(url ?? shareUrl());
 }
 
 export type MapProvider = "naver" | "tmap";
@@ -83,7 +102,7 @@ export async function shareKakao(options?: {
   imageUrl?: string;
 }): Promise<ShareResult> {
   if (typeof window === "undefined") return "failed";
-  const link = options?.url ?? window.location.href;
+  const link = options?.url ?? shareUrl();
 
   // 1) 카카오톡 공유 — 카카오 개발자 앱에 도메인이 등록되어 있어야 한다.
   const key = process.env.NEXT_PUBLIC_KAKAO_MAP_APP_KEY;

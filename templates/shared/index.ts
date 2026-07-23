@@ -55,6 +55,8 @@ export {
   copyLink,
   openMap,
   shareKakao,
+  shareUrl,
+  absoluteUrl,
   type MapProvider,
   type ShareResult,
 } from "./lib/actions";
