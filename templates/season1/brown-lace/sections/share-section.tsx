@@ -9,6 +9,7 @@
 /*  프레임 기준 비율(%)로 절대배치. 감사 문구는 데이터 필드가 없어 정적 텍스트.    */
 /* -------------------------------------------------------------------------- */
 
+import RoughButton from "@/templates/season1/components/rough-button";
 import {
   Editable,
   absoluteUrl,
@@ -18,7 +19,6 @@ import {
   useInvitationData,
 } from "@/templates/shared";
 import { Copy, MessageCircle } from "lucide-react";
-import RoughButton from "@/templates/season1/components/rough-button";
 import { ASSET } from "../assets";
 import { CardReveal } from "../card-reveal";
 import { useIntro } from "../intro-context";
@@ -40,7 +40,8 @@ export function ShareSection() {
     void shareKakao({
       url: INVITATION_URL,
       title: `${groom.ko} ♥ ${bride.ko} 결혼합니다`,
-      description: schedule.dateKo,
+      description:
+        "따뜻한 가을의 문턱에서, 저희의 첫걸음을 함께 축복해 주세요.",
       // 피드 썸네일 — 봉투 썸네일 이미지.
       // 카카오 서버가 접근할 절대 URL(프로덕션 도메인 기준)이어야 한다.
       imageUrl: absoluteUrl("/assets/templates/brown-lace/thumbnail.jpg"),
