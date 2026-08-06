@@ -82,7 +82,7 @@ export const SAMPLE_INVITATION: InvitationData = {
   },
 
   venue: {
-    name: "루클라비 더 화이트",
+    name: "루클라비 더 화이트 2층 단독홀",
     address: "서울시 강남구 논현로 742",
     transport: [
       {
