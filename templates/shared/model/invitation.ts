@@ -94,6 +94,9 @@ export type InvitationData = {
   venue: {
     name: string;
     address: string;
+    /** 좌표(WGS84) — 지정하면 지도 렌더 시 지오코딩 API 호출을 건너뛴다 */
+    lat?: number;
+    lng?: number;
     tel?: string;
     addressDetail?: string;
     transport: TransportGroup[];

@@ -145,6 +145,8 @@ export function VenueSection() {
         <KakaoMap
           address={venue.address}
           name={venue.name}
+          lat={venue.lat}
+          lng={venue.lng}
           className="h-[231px] w-full overflow-hidden rounded-[4px] bg-[#E9E2DD] text-[#7C6D5F]"
         />
 

@@ -72,6 +72,9 @@ type KakaoMapProps = {
   address: string;
   /** 마커 라벨 / 폴백 문구·검색어에 쓰는 장소명 */
   name: string;
+  /** 좌표(WGS84) — 둘 다 주어지면 지오코딩 API 호출 없이 바로 렌더 */
+  lat?: number;
+  lng?: number;
   /** 확대 레벨(작을수록 확대, 기본 3) */
   level?: number;
   /** 컨테이너 스타일(크기·라운드·배경·폴백 텍스트색) */
@@ -84,7 +87,7 @@ const KAKAO_JS_KEY =
   process.env.NEXT_PUBLIC_KAKAO_JS_KEY ??
   process.env.NEXT_PUBLIC_KAKAO_MAP_APP_KEY;
 
-export function KakaoMap({ address, name, level = 3, className = "" }: KakaoMapProps) {
+export function KakaoMap({ address, name, lat, lng, level = 3, className = "" }: KakaoMapProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState(false);
 
@@ -96,20 +99,27 @@ export function KakaoMap({ address, name, level = 3, className = "" }: KakaoMapP
     loadKakaoSdk(KAKAO_JS_KEY)
       .then((kakao) => {
         if (cancelled) return;
+
+        const render = (coords: KakaoLatLng) => {
+          if (cancelled || !ref.current) return;
+          const map = new kakao.maps.Map(ref.current, { center: coords, level });
+          new kakao.maps.Marker({ map, position: coords });
+          map.setCenter(coords);
+        };
+
+        if (lat !== undefined && lng !== undefined) {
+          render(new kakao.maps.LatLng(lat, lng));
+          return;
+        }
+
         const geocoder = new kakao.maps.services.Geocoder();
         geocoder.addressSearch(address, (result, status) => {
-          if (cancelled || !ref.current) return;
+          if (cancelled) return;
           if (status !== kakao.maps.services.Status.OK || !result[0]) {
             setFailed(true);
             return;
           }
-          const coords = new kakao.maps.LatLng(
-            Number(result[0].y),
-            Number(result[0].x),
-          );
-          const map = new kakao.maps.Map(ref.current, { center: coords, level });
-          new kakao.maps.Marker({ map, position: coords });
-          map.setCenter(coords);
+          render(new kakao.maps.LatLng(Number(result[0].y), Number(result[0].x)));
         });
       })
       .catch(() => {
@@ -119,7 +129,7 @@ export function KakaoMap({ address, name, level = 3, className = "" }: KakaoMapP
     return () => {
       cancelled = true;
     };
-  }, [address, name, level]);
+  }, [address, name, lat, lng, level]);
 
   if (!KAKAO_JS_KEY || failed) {
     return (
