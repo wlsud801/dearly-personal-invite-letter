@@ -292,7 +292,7 @@ function CoverSection() {
                 style={{ fontFamily: FONT.pretendard, color: COLOR.muted }}
               >
                 {venue.name}
-                {venue.addressDetail && ` (${venue.addressDetail})`}
+                {venue.addressDetail && ` ${venue.addressDetail}`}
               </Editable>
 
               <Editable
