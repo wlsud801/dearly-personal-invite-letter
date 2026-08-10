@@ -82,8 +82,9 @@ export const SAMPLE_INVITATION: InvitationData = {
   },
 
   venue: {
-    name: "루클라비 더 화이트 2층 단독홀",
+    name: "루클라비 더 화이트",
     address: "서울시 강남구 논현로 742",
+    addressDetail: "2층 단독홀",
     /* 카카오 로컬 API "루클라비더화이트" 검색 결과 좌표 */
     lat: 37.518284,
     lng: 127.029223,
