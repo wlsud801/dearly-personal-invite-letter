@@ -126,6 +126,7 @@ export function VenueSection() {
           <div className="flex items-center justify-center gap-1">
             <p className="whitespace-nowrap" style={addressStyle}>
               {venue.address}
+              {venue.addressDetail && ` (${venue.addressDetail})`}
             </p>
             <button
               type="button"
