@@ -13,7 +13,6 @@ import RoughButton from "@/templates/season1/components/rough-button";
 import {
   Editable,
   absoluteUrl,
-  kakaoMapUrl,
   copyLink,
   shareKakao,
   showToast,
@@ -46,11 +45,9 @@ export function ShareSection() {
       // 피드 썸네일 — 봉투 썸네일 이미지.
       // 카카오 서버가 접근할 절대 URL(프로덕션 도메인 기준)이어야 한다.
       imageUrl: absoluteUrl("/assets/templates/brown-lace/thumbnail.jpg"),
-      // "위치보기" 버튼 — 예식장 좌표가 있을 때만 카카오맵 링크를 붙인다.
-      mapUrl:
-        venue.lat !== undefined && venue.lng !== undefined
-          ? kakaoMapUrl(venue.name, venue.lat, venue.lng)
-          : undefined,
+      // 카카오톡 "위치 보기" 버튼용 예식장 주소 (location 타입 메시지)
+      address: venue.address,
+      addressTitle: venue.name,
     }).then((result) => {
       if (result === "copied") showToast("청첩장 주소가 복사되었습니다.");
       else if (result === "failed") showToast("공유에 실패했습니다.");

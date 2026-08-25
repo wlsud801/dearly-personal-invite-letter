@@ -57,7 +57,6 @@ export {
   shareKakao,
   shareUrl,
   absoluteUrl,
-  kakaoMapUrl,
   type MapProvider,
   type ShareResult,
 } from "./lib/actions";
