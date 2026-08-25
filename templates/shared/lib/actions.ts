@@ -52,6 +52,11 @@ export function openMap(provider: MapProvider, query: string): void {
   window.open(url, "_blank", "noopener,noreferrer");
 }
 
+/** 카카오맵 장소 링크 (앱 설치 시 앱, 미설치 시 웹 지도로 열린다). */
+export function kakaoMapUrl(name: string, lat: number, lng: number): string {
+  return `https://map.kakao.com/link/map/${encodeURIComponent(name)},${lat},${lng}`;
+}
+
 /* ----------------------------- Kakao share ------------------------------- */
 
 type KakaoShareSDK = {
@@ -100,6 +105,8 @@ export async function shareKakao(options?: {
   title?: string;
   description?: string;
   imageUrl?: string;
+  /** 지정하면 "위치보기" 버튼이 추가된다 (카카오맵 링크 등). 피드 버튼은 최대 2개. */
+  mapUrl?: string;
 }): Promise<ShareResult> {
   if (typeof window === "undefined") return "failed";
   const link = options?.url ?? shareUrl();
@@ -120,6 +127,25 @@ export async function shareKakao(options?: {
             imageUrl: options?.imageUrl ?? "",
             link: { mobileWebUrl: link, webUrl: link },
           },
+          // 콘텐츠 영역과 버튼 모두 초대장 URL 로 — 버튼을 명시하지 않으면
+          // 카카오 기본 버튼/링크 처리로 앱 등록 도메인 루트로 갈 수 있다.
+          buttons: [
+            {
+              title: "초대장 가기",
+              link: { mobileWebUrl: link, webUrl: link },
+            },
+            ...(options?.mapUrl
+              ? [
+                  {
+                    title: "위치보기",
+                    link: {
+                      mobileWebUrl: options.mapUrl,
+                      webUrl: options.mapUrl,
+                    },
+                  },
+                ]
+              : []),
+          ],
         });
         return "kakao";
       } catch {
